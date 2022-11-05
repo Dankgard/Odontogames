@@ -95,11 +95,11 @@ public class StrapiComponent : MonoBehaviour
             Debug.Log("Couldn't validate stored JWT. You should consider setting your Strapi Component JWT secret.");
             return true;
         }
-        
+
         try
         {
             JsonData jsonPayload = JWT.JsonWebToken.DecodeToObject(jwt, JWTSecret);
-            //Debug.Log(jsonPayload);
+            //Debug.Log("COSA " + jsonPayload);
             DateTime exp = ConvertFromUnixTimestamp(double.Parse(jsonPayload["exp"].ToString()));
             if (exp > DateTime.UtcNow.AddMinutes(1))
             {
@@ -205,6 +205,7 @@ public class StrapiComponent : MonoBehaviour
     public void OnAuthSuccessHandler(AuthResponse authResponse)
     {
         AuthenticatedUser = authResponse.user;
+        Debug.Log("Usuario " + authResponse.user);
         IsAuthenticated = true;
         
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + authResponse.jwt;

@@ -43,8 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7873fd1c08015174bb8e847a9d7aae39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseURL: 
-  User:
+  BaseURL: https://odonto-server.et.r.appspot.com/api
+  JWTSecret: 
+  AuthenticatedUser:
     id: 0
     username: 
     email: 
