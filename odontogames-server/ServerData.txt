@@ -1,9 +1,0 @@
-DATABASE_URL: postgres:
-//pzznmjmhelvqcx:3ac0f7d396df153cc13c50b5427506f11b4caa9ad9a1237e7225cf89c9af8795
-@ec2-52-23-131-232.compute-1.amazonaws.com:5432/d562og52sc8nle
-
-USERNAME -> pzznmjmhelvqcx
-PASSWORD -> 3ac0f7d396df153cc13c50b5427506f11b4caa9ad9a1237e7225cf89c9af8795
-HOST -> @ec2-52-23-131-232.compute-1.amazonaws.com
-PORT -> 5432
-DATABASE-NAME -> d562og52sc8nle

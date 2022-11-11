@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Libs/StrapiForUnity/Example Scenes/LoginOrRegisterForm.unity
+    guid: b6900d062bfab53448234a3e39e967f3
   m_configObjects: {}

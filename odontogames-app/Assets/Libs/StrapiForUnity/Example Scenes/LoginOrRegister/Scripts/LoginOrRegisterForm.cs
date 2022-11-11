@@ -13,12 +13,18 @@ public class LoginOrRegisterForm : MonoBehaviour
     public Button LoginSubmitButton;
     public Button RegisterSubmitButton;
     public InputField UsernameInput;
-    public InputField EmailInput;
     public InputField PasswordInput;
+    public InputField EmailInput;
     public Text HeaderText;
     public VerticalLayoutGroup ContainerLayout;
     public GameObject LoadingObject;
     public Toggle RememberMeToggle;
+
+    public Button DeleteAccountButton;
+
+    public Button EditProfileButton;
+    public InputField EditUsernameInput;
+    public Button SubmitEditRequest;
     
     
     public StrapiComponent Strapi;
@@ -56,9 +62,21 @@ public class LoginOrRegisterForm : MonoBehaviour
             {
                 LoginSubmitButton.onClick.Invoke();
             }
-            else
+            else if (RegisterSubmitButton.IsActive())
             {
                 RegisterSubmitButton.onClick.Invoke();
+            }
+            else if (DeleteAccountButton.IsActive())
+            {
+                DeleteAccountButton.onClick.Invoke();
+            }
+            else if (EditProfileButton.IsActive())
+            {
+                EditProfileButton.onClick.Invoke();
+            }
+            else if (SubmitEditRequest.IsActive())
+            {
+                SubmitEditRequest.onClick.Invoke();
             }
         }
     }
@@ -70,7 +88,13 @@ public class LoginOrRegisterForm : MonoBehaviour
         EmailInput.transform.parent.gameObject.SetActive(false);
         RegisterToggleButton.gameObject.SetActive(true);
         LoginToggleButton.gameObject.SetActive(false);
-        HeaderText.text = "Login";
+        DeleteAccountButton.gameObject.SetActive(false);
+
+        EditProfileButton.gameObject.SetActive(false);
+        SubmitEditRequest.gameObject.SetActive(false);
+        EditUsernameInput.transform.parent.gameObject.SetActive(false);
+
+    HeaderText.text = "Login";
         
         forceLayoutUpdate();
     }
@@ -82,8 +106,76 @@ public class LoginOrRegisterForm : MonoBehaviour
         EmailInput.transform.parent.gameObject.SetActive(true);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(true);
+        DeleteAccountButton.gameObject.SetActive(false);
+
+        EditProfileButton.gameObject.SetActive(false);
+        SubmitEditRequest.gameObject.SetActive(false);
+        EditUsernameInput.transform.parent.gameObject.SetActive(false);
+
         HeaderText.text = "Register";
         
+        forceLayoutUpdate();
+    }
+
+    public void deleteAccount()
+    {
+        Strapi.DeleteAccount();
+        UsernameInput.transform.parent.gameObject.SetActive(false);
+        EmailInput.transform.parent.gameObject.SetActive(false);
+        PasswordInput.transform.parent.gameObject.SetActive(false);
+
+        RegisterSubmitButton.gameObject.SetActive(true);
+        LoginSubmitButton.gameObject.SetActive(false);
+        RegisterToggleButton.gameObject.SetActive(true);
+        LoginToggleButton.gameObject.SetActive(false);
+
+        EditProfileButton.gameObject.SetActive(false);
+        SubmitEditRequest.gameObject.SetActive(false);
+        EditUsernameInput.transform.parent.gameObject.SetActive(false);
+
+        HeaderText.text = "Successfully deleted account";
+
+        forceLayoutUpdate();
+    }
+
+    public void EditProfile()
+    {
+        UsernameInput.transform.parent.gameObject.SetActive(false);
+        EmailInput.transform.parent.gameObject.SetActive(false);
+        PasswordInput.transform.parent.gameObject.SetActive(false);
+
+        RegisterSubmitButton.gameObject.SetActive(false);
+        LoginSubmitButton.gameObject.SetActive(false);
+        RegisterToggleButton.gameObject.SetActive(false);
+        LoginToggleButton.gameObject.SetActive(false);
+
+        EditProfileButton.gameObject.SetActive(false);
+        SubmitEditRequest.gameObject.SetActive(true);
+        EditUsernameInput.transform.parent.gameObject.SetActive(true);
+
+        HeaderText.text = "Seeing Profile";
+
+        forceLayoutUpdate();
+    }
+
+    public void SubmitRequest()
+    {
+        Strapi.EditProfile(EditUsernameInput.text);
+
+        UsernameInput.transform.parent.gameObject.SetActive(false);
+        EmailInput.transform.parent.gameObject.SetActive(false);
+        PasswordInput.transform.parent.gameObject.SetActive(false);
+
+        RegisterSubmitButton.gameObject.SetActive(false);
+        LoginSubmitButton.gameObject.SetActive(false);
+        RegisterToggleButton.gameObject.SetActive(false);
+        LoginToggleButton.gameObject.SetActive(false);
+
+        EditProfileButton.gameObject.SetActive(false);
+        SubmitEditRequest.gameObject.SetActive(false);
+        EditUsernameInput.transform.parent.gameObject.SetActive(false);
+
+        HeaderText.text = "Profile updated";
         forceLayoutUpdate();
     }
     
@@ -117,11 +209,14 @@ public class LoginOrRegisterForm : MonoBehaviour
         RegisterSubmitButton.gameObject.SetActive(false);
         LoginSubmitButton.gameObject.SetActive(false);
         UsernameInput.transform.parent.gameObject.SetActive(false);
-        EmailInput.transform.parent.gameObject.SetActive(false);
         PasswordInput.transform.parent.gameObject.SetActive(false);
+        EmailInput.transform.parent.gameObject.SetActive(false);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
         RememberMeToggle.gameObject.SetActive(false);
+
+        DeleteAccountButton.gameObject.SetActive(true);
+        EditProfileButton.gameObject.SetActive(true);
     }
 
     private void handleUnsuccessfulAuthentication(Exception error)

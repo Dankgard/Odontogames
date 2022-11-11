@@ -1,7 +1,7 @@
 ﻿﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
- using LitJson;
+using LitJson;
 using StrapiForUnity;
 using UnityEngine;
 using Proyecto26;
@@ -12,6 +12,8 @@ public class StrapiComponent : MonoBehaviour
     public event Action<Exception> OnAuthFail = delegate {  };
     public event Action OnAuthStarted = delegate {  };
     public event Action NoStoredJWT = delegate { };
+
+    public event Action deleteAccount = delegate { };
     
     [Tooltip("The root URL of your Strapi server. For example: http://localhost:1337")]
     public string BaseURL;
@@ -24,6 +26,9 @@ public class StrapiComponent : MonoBehaviour
     public string ErrorMessage;
 
     private bool rememberMe = true;
+
+    private string userJWT = "";
+    private string userID = "";
 
     //Singleton
     private static StrapiComponent _instance;
@@ -51,7 +56,7 @@ public class StrapiComponent : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        checkForSavedJWT();
+        //checkForSavedJWT();
     }
 
     // Update is called once per frame
@@ -77,13 +82,15 @@ public class StrapiComponent : MonoBehaviour
 
     private void checkForSavedJWT()
     {
-        string jwt = PlayerPrefs.GetString("jwt","");
-        if (jwt != "" && isValidJWT(jwt))
+        //string jwt = PlayerPrefs.GetString("jwt", "");
+        if (userJWT != "" && isValidJWT(userJWT))
         {
-            LoginWithJwt(jwt);
+            Debug.Log("Login with JWT");
+            LoginWithJwt(userJWT);
         }
         else
         {
+            Debug.Log("Login without JWT");
             NoStoredJWT?.Invoke();
         }
     }
@@ -98,8 +105,7 @@ public class StrapiComponent : MonoBehaviour
 
         try
         {
-            JsonData jsonPayload = JWT.JsonWebToken.DecodeToObject(jwt, JWTSecret);
-            //Debug.Log("COSA " + jsonPayload);
+            JsonData jsonPayload = JWT.JsonWebToken.DecodeToObject(userJWT, JWTSecret);
             DateTime exp = ConvertFromUnixTimestamp(double.Parse(jsonPayload["exp"].ToString()));
             if (exp > DateTime.UtcNow.AddMinutes(1))
             {
@@ -130,17 +136,17 @@ public class StrapiComponent : MonoBehaviour
         return origin.AddSeconds(timestamp);
     }
     
-    public void Login(string identifier, string password, bool rememberMe = false)
+    public void Login(string username, string password, bool rememberMe = false)
     {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
         
         var jsonString = "{" +
-                         "\"identifier\":\"" + identifier + "\"," +
+                         "\"identifier\":\"" + username + "\"," +
                          "\"password\":\"" + password + "\"" +
                          "}";
 
-        PostAuthRequest("auth/local", jsonString);
+        PostAuthRequest("api/auth/local", jsonString);
     }
 
     public void Register(string username, string email, string password, bool rememberMe = false, Dictionary<string,string> extraAttributes = null)
@@ -152,6 +158,7 @@ public class StrapiComponent : MonoBehaviour
                          "\"username\":\"" + username + "\"," +
                          "\"email\":\"" + email + "\"," +
                          "\"password\":\"" + password + "\"";
+
         if (extraAttributes != null && extraAttributes.Count > 0)
         {
             foreach (var attribute in extraAttributes)
@@ -161,13 +168,48 @@ public class StrapiComponent : MonoBehaviour
             jsonString = jsonString.Remove(jsonString.Length - 1); // removes the final trailing comma
         }
         jsonString += "}";
-        
-        PostAuthRequest("auth/local/register", jsonString);
+
+        PostAuthRequest("api/auth/local/register", jsonString);
+    }
+
+    public virtual void DeleteAccount()
+    {
+        OnAuthStarted?.Invoke();
+        string endpoint = "api/users/" + userID;
+        DeleteRequest(endpoint);
+    }
+
+    public virtual void EditProfile(string username)
+    {
+        if (username != AuthenticatedUser.username)
+        {
+            OnAuthStarted?.Invoke();
+            var jsonString = "{" +
+                         "\"username\":\"" + username + "\"," +
+                         "\"email\":\"" + AuthenticatedUser.email + "\"," +
+                         "\"password\":\"" + "password" + "\"";
+            jsonString += "}";
+
+            string endpoint = "api/users" + AuthenticatedUser.id.ToString();
+            PutRequest(endpoint, jsonString, userJWT);
+        }
+    }
+
+    public virtual void PutRequest(string endpoint, string jsonString, string jwt)
+    {
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + jwt;
+        RestClient.Put(BaseURL + endpoint, jsonString);
+    }
+
+    public virtual void DeleteRequest(string endpoint)
+    {
+        RestClient.Delete(BaseURL + endpoint);
+        userID = "";
     }
 
     public virtual void PostAuthRequest(string endpoint, string jsonString)
     {
-        RestClient.Post<AuthResponse>(BaseURL + endpoint,jsonString).Then(authResponse =>
+        RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
             OnAuthSuccess?.Invoke(authResponse);
         }).Catch(err =>
@@ -184,10 +226,9 @@ public class StrapiComponent : MonoBehaviour
     public virtual void LoginWithJwt(string jwt)
     {
         OnAuthStarted?.Invoke();
-        
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + jwt;
-        
-        RestClient.Get<StrapiUser>(BaseURL + "users/me").Then(response => {
+        RestClient.Get<StrapiUser>(BaseURL + "api/users/me").Then(response =>
+        {
             Debug.Log(response);
             AuthResponse authResponse = new AuthResponse()
             {
@@ -197,6 +238,7 @@ public class StrapiComponent : MonoBehaviour
             OnAuthSuccess?.Invoke(authResponse);
         }).Catch(err =>
         {
+            Debug.Log("Error logging with JWT");
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
         });
@@ -205,14 +247,16 @@ public class StrapiComponent : MonoBehaviour
     public void OnAuthSuccessHandler(AuthResponse authResponse)
     {
         AuthenticatedUser = authResponse.user;
+        userJWT = authResponse.jwt;
+        userID = authResponse.user.id.ToString();
         Debug.Log("Usuario " + authResponse.user);
         IsAuthenticated = true;
         
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + authResponse.jwt;
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
 
         if (rememberMe && authResponse.jwt != null)
         {
-            PlayerPrefs.SetString("jwt",authResponse.jwt);
+            PlayerPrefs.SetString("jwt", userJWT);
         }
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
     }
