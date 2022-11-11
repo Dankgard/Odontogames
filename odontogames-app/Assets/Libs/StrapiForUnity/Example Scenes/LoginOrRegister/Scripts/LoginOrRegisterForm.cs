@@ -24,8 +24,11 @@ public class LoginOrRegisterForm : MonoBehaviour
 
     public Button EditProfileButton;
     public InputField EditUsernameInput;
+    public InputField EditEmailInput;
+    public InputField EditPasswordInput;
+    public InputField EditNameInput;
+    public InputField EditSurnameInput;
     public Button SubmitEditRequest;
-    
     
     public StrapiComponent Strapi;
 
@@ -90,11 +93,15 @@ public class LoginOrRegisterForm : MonoBehaviour
         LoginToggleButton.gameObject.SetActive(false);
         DeleteAccountButton.gameObject.SetActive(false);
 
-        EditProfileButton.gameObject.SetActive(false);
+        EditProfileButton.gameObject.SetActive(true);
         SubmitEditRequest.gameObject.SetActive(false);
         EditUsernameInput.transform.parent.gameObject.SetActive(false);
+        EditEmailInput.transform.parent.gameObject.SetActive(false);
+        EditPasswordInput.transform.parent.gameObject.SetActive(false);
+        EditNameInput.transform.parent.gameObject.SetActive(false);
+        EditSurnameInput.transform.parent.gameObject.SetActive(false);
 
-    HeaderText.text = "Login";
+        HeaderText.text = "Login";
         
         forceLayoutUpdate();
     }
@@ -111,6 +118,10 @@ public class LoginOrRegisterForm : MonoBehaviour
         EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(false);
         EditUsernameInput.transform.parent.gameObject.SetActive(false);
+        EditEmailInput.transform.parent.gameObject.SetActive(false);
+        EditPasswordInput.transform.parent.gameObject.SetActive(false);
+        EditNameInput.transform.parent.gameObject.SetActive(false);
+        EditSurnameInput.transform.parent.gameObject.SetActive(false);
 
         HeaderText.text = "Register";
         
@@ -132,6 +143,10 @@ public class LoginOrRegisterForm : MonoBehaviour
         EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(false);
         EditUsernameInput.transform.parent.gameObject.SetActive(false);
+        EditEmailInput.transform.parent.gameObject.SetActive(false);
+        EditPasswordInput.transform.parent.gameObject.SetActive(false);
+        EditNameInput.transform.parent.gameObject.SetActive(false);
+        EditSurnameInput.transform.parent.gameObject.SetActive(false);
 
         HeaderText.text = "Successfully deleted account";
 
@@ -152,8 +167,14 @@ public class LoginOrRegisterForm : MonoBehaviour
         EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(true);
         EditUsernameInput.transform.parent.gameObject.SetActive(true);
+        EditEmailInput.transform.parent.gameObject.SetActive(true);
+        EditPasswordInput.transform.parent.gameObject.SetActive(true);
+        EditNameInput.transform.parent.gameObject.SetActive(true);
+        EditSurnameInput.transform.parent.gameObject.SetActive(true);
 
-        HeaderText.text = "Seeing Profile";
+        RememberMeToggle.gameObject.SetActive(false);
+
+        HeaderText.text = "Profile Settings";
 
         forceLayoutUpdate();
     }
@@ -174,6 +195,10 @@ public class LoginOrRegisterForm : MonoBehaviour
         EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(false);
         EditUsernameInput.transform.parent.gameObject.SetActive(false);
+        EditEmailInput.transform.parent.gameObject.SetActive(false);
+        EditPasswordInput.transform.parent.gameObject.SetActive(false);
+        EditNameInput.transform.parent.gameObject.SetActive(false);
+        EditSurnameInput.transform.parent.gameObject.SetActive(false);
 
         HeaderText.text = "Profile updated";
         forceLayoutUpdate();
