@@ -5,7 +5,6 @@ using StrapiForUnity;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class LoginOrRegisterScreen : MonoBehaviour {
     public Text HeaderText;
@@ -102,7 +101,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {
-        SceneManager.LoadScene("MainMenu");
+        SceneHandler.instance.LoadScene("MainMenu");
     }
 
     private void handleUnsuccessfulAuthentication(Exception error) {

@@ -162,9 +162,16 @@ public class LoginOrRegisterForm : MonoBehaviour {
         EditNameInput.transform.parent.gameObject.SetActive(false);
         EditSurnameInput.transform.parent.gameObject.SetActive(false);
 
-        HeaderText.text = "Successfully deleted account";
+        HeaderText.text = "Successfully deleted account. App will now close to submit changes.";
 
         forceLayoutUpdate();
+
+        Invoke("CloseApp", 3.0f);   
+    }
+
+    public void CloseApp()
+    {
+        Application.Quit();
     }
 
     public void EditProfile()
