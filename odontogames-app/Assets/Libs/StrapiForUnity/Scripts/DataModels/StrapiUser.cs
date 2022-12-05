@@ -9,8 +9,11 @@ using UnityEngine;
         public int id;
         public string username;
         public string email;
+        public string password;
         public string provider;
         public bool confirmed;
+        public string name;
+        public string surname;
         [SerializeField]
         private string created_at;
         private DateTime? _createdAt;

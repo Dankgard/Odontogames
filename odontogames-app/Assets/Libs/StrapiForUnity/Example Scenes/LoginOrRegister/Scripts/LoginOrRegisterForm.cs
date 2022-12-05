@@ -6,22 +6,29 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoginOrRegisterForm : MonoBehaviour
-{
-    public Button LoginToggleButton;
-    public Button RegisterToggleButton;
-    public Button LoginSubmitButton;
-    public Button RegisterSubmitButton;
-    public InputField UsernameInput;
-    public InputField PasswordInput;
-    public InputField EmailInput;
+public class LoginOrRegisterForm : MonoBehaviour {
     public Text HeaderText;
     public VerticalLayoutGroup ContainerLayout;
     public GameObject LoadingObject;
     public Toggle RememberMeToggle;
 
+    // Elementos para iniciar sesion
+    public Button LoginSubmitButton;
+    public Button LoginToggleButton;
+
+    // Elementos para registrar usuario
+    public Button RegisterToggleButton;
+    public Button RegisterSubmitButton;
+    public InputField UsernameInput;
+    public InputField PasswordInput;
+    public InputField EmailInput;
+    public InputField nameInput;
+    public InputField surnameInput;
+
+    // Elementos para eliminar una cuenta
     public Button DeleteAccountButton;
 
+    // Elementos para editar el perfil del usuario
     public Button EditProfileButton;
     public InputField EditUsernameInput;
     public InputField EditEmailInput;
@@ -90,10 +97,12 @@ public class LoginOrRegisterForm : MonoBehaviour
         LoginSubmitButton.gameObject.SetActive(true);
         EmailInput.transform.parent.gameObject.SetActive(false);
         RegisterToggleButton.gameObject.SetActive(true);
+        nameInput.transform.parent.gameObject.SetActive(false);
+        surnameInput.transform.parent.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
         DeleteAccountButton.gameObject.SetActive(false);
 
-        EditProfileButton.gameObject.SetActive(true);
+        EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(false);
         EditUsernameInput.transform.parent.gameObject.SetActive(false);
         EditEmailInput.transform.parent.gameObject.SetActive(false);
@@ -111,6 +120,8 @@ public class LoginOrRegisterForm : MonoBehaviour
         RegisterSubmitButton.gameObject.SetActive(true);
         LoginSubmitButton.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(true);
+        nameInput.transform.parent.gameObject.SetActive(true);
+        surnameInput.transform.parent.gameObject.SetActive(true);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(true);
         DeleteAccountButton.gameObject.SetActive(false);
@@ -134,11 +145,14 @@ public class LoginOrRegisterForm : MonoBehaviour
         UsernameInput.transform.parent.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(false);
         PasswordInput.transform.parent.gameObject.SetActive(false);
+        nameInput.transform.parent.gameObject.SetActive(false);
+        surnameInput.transform.parent.gameObject.SetActive(false);
 
-        RegisterSubmitButton.gameObject.SetActive(true);
-        LoginSubmitButton.gameObject.SetActive(false);
+        RegisterSubmitButton.gameObject.SetActive(false);
+        LoginSubmitButton.gameObject.SetActive(true);
         RegisterToggleButton.gameObject.SetActive(true);
         LoginToggleButton.gameObject.SetActive(false);
+        LoadingObject.SetActive(false);
 
         EditProfileButton.gameObject.SetActive(false);
         SubmitEditRequest.gameObject.SetActive(false);
@@ -158,6 +172,8 @@ public class LoginOrRegisterForm : MonoBehaviour
         UsernameInput.transform.parent.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(false);
         PasswordInput.transform.parent.gameObject.SetActive(false);
+        nameInput.transform.parent.gameObject.SetActive(false);
+        surnameInput.transform.parent.gameObject.SetActive(false);
 
         RegisterSubmitButton.gameObject.SetActive(false);
         LoginSubmitButton.gameObject.SetActive(false);
@@ -171,6 +187,12 @@ public class LoginOrRegisterForm : MonoBehaviour
         EditPasswordInput.transform.parent.gameObject.SetActive(true);
         EditNameInput.transform.parent.gameObject.SetActive(true);
         EditSurnameInput.transform.parent.gameObject.SetActive(true);
+
+        EditUsernameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
+        EditEmailInput.GetComponent<EditProfilePlaceholderText>().ShowText();
+        EditPasswordInput.GetComponent<EditProfilePlaceholderText>().ShowText();
+        EditNameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
+        EditSurnameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
 
         RememberMeToggle.gameObject.SetActive(false);
 
@@ -186,6 +208,8 @@ public class LoginOrRegisterForm : MonoBehaviour
         UsernameInput.transform.parent.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(false);
         PasswordInput.transform.parent.gameObject.SetActive(false);
+        nameInput.transform.parent.gameObject.SetActive(false);
+        surnameInput.transform.parent.gameObject.SetActive(false);
 
         RegisterSubmitButton.gameObject.SetActive(false);
         LoginSubmitButton.gameObject.SetActive(false);
@@ -218,7 +242,7 @@ public class LoginOrRegisterForm : MonoBehaviour
 
     public void OnRegisterSubmit()
     {
-        Strapi.Register(UsernameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        Strapi.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
     }
 
     private void toggleLoading()
@@ -236,6 +260,8 @@ public class LoginOrRegisterForm : MonoBehaviour
         UsernameInput.transform.parent.gameObject.SetActive(false);
         PasswordInput.transform.parent.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(false);
+        nameInput.transform.parent.gameObject.SetActive(false);
+        surnameInput.transform.parent.gameObject.SetActive(false);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
         RememberMeToggle.gameObject.SetActive(false);

@@ -136,8 +136,7 @@ public class StrapiComponent : MonoBehaviour
         return origin.AddSeconds(timestamp);
     }
     
-    public void Login(string username, string password, bool rememberMe = false)
-    {
+    public void Login(string username, string password, bool rememberMe = false) {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
         
@@ -149,13 +148,14 @@ public class StrapiComponent : MonoBehaviour
         PostAuthRequest("api/auth/local", jsonString);
     }
 
-    public void Register(string username, string email, string password, bool rememberMe = false, Dictionary<string,string> extraAttributes = null)
-    {
+    public void Register(string username, string name, string surname, string email, string password, bool rememberMe = false, Dictionary<string,string> extraAttributes = null) {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
 
         var jsonString = "{" +
                          "\"username\":\"" + username + "\"," +
+                         "\"name\":\"" + name + "\"," +
+                         "\"surname\":\"" + surname + "\"," +
                          "\"email\":\"" + email + "\"," +
                          "\"password\":\"" + password + "\"";
 
@@ -172,11 +172,11 @@ public class StrapiComponent : MonoBehaviour
         PostAuthRequest("api/auth/local/register", jsonString);
     }
 
-    public virtual void DeleteAccount()
-    {
+    public virtual void DeleteAccount() {
+        // FORZAR A CERRAR LA APLICACION
+
         OnAuthStarted?.Invoke();
         string endpoint = "api/users/" + userID;
-        DeleteRequest(endpoint);
     }
 
     public virtual void EditProfile(string username)
@@ -187,10 +187,11 @@ public class StrapiComponent : MonoBehaviour
             var jsonString = "{" +
                          "\"username\":\"" + username + "\"," +
                          "\"email\":\"" + AuthenticatedUser.email + "\"," +
-                         "\"password\":\"" + "password" + "\"";
+                         "\"password\":\"" + "new password" + "\"";
             jsonString += "}";
 
-            string endpoint = "api/users" + AuthenticatedUser.id.ToString();
+            string endpoint = "api/users/" + AuthenticatedUser.id.ToString();
+            Debug.Log(BaseURL + endpoint);
             PutRequest(endpoint, jsonString, userJWT);
         }
     }
@@ -198,7 +199,14 @@ public class StrapiComponent : MonoBehaviour
     public virtual void PutRequest(string endpoint, string jsonString, string jwt)
     {
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + jwt;
-        RestClient.Put(BaseURL + endpoint, jsonString);
+        RestClient.Put<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
+        {
+            OnAuthSuccess?.Invoke(authResponse);
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
     }
 
     public virtual void DeleteRequest(string endpoint)
@@ -249,7 +257,7 @@ public class StrapiComponent : MonoBehaviour
         AuthenticatedUser = authResponse.user;
         userJWT = authResponse.jwt;
         userID = authResponse.user.id.ToString();
-        Debug.Log("Usuario " + authResponse.user);
+        Debug.Log("Usuario " + authResponse.user.name);
         IsAuthenticated = true;
         
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
@@ -259,5 +267,30 @@ public class StrapiComponent : MonoBehaviour
             PlayerPrefs.SetString("jwt", userJWT);
         }
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
+    }
+
+    public String GetUsername()
+    {
+        return AuthenticatedUser.username;
+    }
+
+    public String GetEmail()
+    {
+        return AuthenticatedUser.email;
+    }
+
+    public String GetPassword()
+    {
+        return AuthenticatedUser.password;
+    }
+
+    public String GetName()
+    {
+        return AuthenticatedUser.name;
+    }
+
+    public String GetSurname()
+    {
+        return AuthenticatedUser.surname;
     }
 }
