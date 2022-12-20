@@ -3,9 +3,8 @@ using UnityEngine;
 
  namespace StrapiForUnity
 {
-    [Serializable]
-    public class StrapiUser 
-    {
+    [System.Serializable]
+    public class StrapiUser {
         public int id;
         public string username;
         public string email;
@@ -14,6 +13,7 @@ using UnityEngine;
         public bool confirmed;
         public string name;
         public string surname;
+
         [SerializeField]
         private string created_at;
         private DateTime? _createdAt;
@@ -24,6 +24,7 @@ using UnityEngine;
             }
             return _createdAt;
         }
+
         [SerializeField]
         private string updated_at;
         private DateTime? _updatedAt;

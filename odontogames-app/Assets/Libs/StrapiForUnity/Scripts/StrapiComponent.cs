@@ -1,6 +1,5 @@
 ﻿﻿﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using LitJson;
 using StrapiForUnity;
 using UnityEngine;
@@ -10,6 +9,7 @@ public class StrapiComponent : MonoBehaviour
 {
     public event Action<AuthResponse> OnAuthSuccess = delegate {  };
     public event Action<Exception> OnAuthFail = delegate {  };
+
     public event Action OnAuthStarted = delegate {  };
     public event Action NoStoredJWT = delegate { };
 
@@ -146,9 +146,10 @@ public class StrapiComponent : MonoBehaviour
                          "}";
 
         PostAuthRequest("api/auth/local", jsonString);
+        GetUsersRequest("api/users");
     }
 
-    public void Register(string username, string name, string surname, string email, string password, bool rememberMe = false, Dictionary<string,string> extraAttributes = null) {
+    public void Register(string username, string name, string surname, string email, string password, bool rememberMe = false/*, Dictionary<string,string> extraAttributes = null*/) {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
 
@@ -159,22 +160,22 @@ public class StrapiComponent : MonoBehaviour
                          "\"email\":\"" + email + "\"," +
                          "\"password\":\"" + password + "\"";
 
-        if (extraAttributes != null && extraAttributes.Count > 0)
-        {
-            foreach (var attribute in extraAttributes)
-            {
-                jsonString += "\""+attribute.Key+"\":\"" + attribute.Value + "\",";
-            }
-            jsonString = jsonString.Remove(jsonString.Length - 1); // removes the final trailing comma
-        }
+        //if (extraAttributes != null && extraAttributes.Count > 0)
+        //{
+        //    foreach (var attribute in extraAttributes)
+        //    {
+        //        jsonString += "\""+attribute.Key+"\":\"" + attribute.Value + "\",";
+        //    }
+        //    jsonString = jsonString.Remove(jsonString.Length - 1); // removes the final trailing comma
+        //}
         jsonString += "}";
 
         PostAuthRequest("api/auth/local/register", jsonString);
+
+        //GetUsers();
     }
 
     public virtual void DeleteAccount() {
-        // FORZAR A CERRAR LA APLICACION
-
         OnAuthStarted?.Invoke();
         string endpoint = "api/users/" + userID;
     }
@@ -191,7 +192,6 @@ public class StrapiComponent : MonoBehaviour
             jsonString += "}";
 
             string endpoint = "api/users/" + AuthenticatedUser.id.ToString();
-            Debug.Log(BaseURL + endpoint);
             PutRequest(endpoint, jsonString, userJWT);
         }
     }
@@ -215,8 +215,7 @@ public class StrapiComponent : MonoBehaviour
         userID = "";
     }
 
-    public virtual void PostAuthRequest(string endpoint, string jsonString)
-    {
+    public virtual void PostAuthRequest(string endpoint, string jsonString) {
         RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
             OnAuthSuccess?.Invoke(authResponse);
@@ -226,7 +225,37 @@ public class StrapiComponent : MonoBehaviour
             Debug.Log($"Authentication Error: {err}");
         });
     }
-    
+
+    public virtual void GetAuthRequest(string endpoint)
+    {
+        OnAuthStarted?.Invoke();
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
+        RestClient.Get<AuthResponse>(BaseURL + endpoint).Then(authResponse =>
+        {
+            OnAuthSuccess?.Invoke(authResponse);
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+
+    public virtual void GetUsersRequest(string endpoint)
+    {
+        OnAuthStarted?.Invoke();
+        RestClient.GetArray<StrapiUser>(BaseURL + endpoint).Then(response =>
+        {
+            UserResponse userResponse = new UserResponse()
+            {
+                users = response
+            };
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+
     /// <summary>
     /// Login with an authentication token
     /// </summary>
