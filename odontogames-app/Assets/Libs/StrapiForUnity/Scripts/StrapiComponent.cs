@@ -240,7 +240,7 @@ public class StrapiComponent : MonoBehaviour
         });
     }
 
-    public virtual void GetUsersRequest(string endpoint)
+    public virtual StrapiUser[] GetUsersRequest(string endpoint)
     {
         OnAuthStarted?.Invoke();
         RestClient.GetArray<StrapiUser>(BaseURL + endpoint).Then(response =>
@@ -249,11 +249,17 @@ public class StrapiComponent : MonoBehaviour
             {
                 users = response
             };
+
+            return userResponse.users;
         }).Catch(err =>
         {
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
+
+            return null;
         });
+
+        return null;
     }
 
     /// <summary>
