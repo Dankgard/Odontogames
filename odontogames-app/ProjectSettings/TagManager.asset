@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - platform1
+  - platform2
+  - platform3
+  - platform4
+  - platform5
+  - image
+  - robot
   layers:
   - Default
   - TransparentFX
