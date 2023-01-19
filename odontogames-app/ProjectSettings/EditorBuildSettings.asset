@@ -14,4 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 77250c8cd2c886843a8478069b03e1e3
+  - enabled: 1
+    path: Assets/Scenes/GlobalUserList.unity
+    guid: 4e070b25ab68cbc478f3413d0cc22709
+  - enabled: 1
+    path: Assets/Scenes/CreateNewGroup.unity
+    guid: 31116ad5fca1a87478216d5b03fd61c5
+  - enabled: 1
+    path: Assets/Scenes/TeamsLists.unity
+    guid: b83a15bfba0f4484198f850e77270ae7
   m_configObjects: {}

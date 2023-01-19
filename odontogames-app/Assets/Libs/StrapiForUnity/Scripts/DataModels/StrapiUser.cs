@@ -11,8 +11,8 @@ using UnityEngine;
         public string password;
         public string provider;
         public bool confirmed;
-        public string name;
-        public string surname;
+        public string Firstname;
+        public string Lastname;
 
         [SerializeField]
         private string created_at;

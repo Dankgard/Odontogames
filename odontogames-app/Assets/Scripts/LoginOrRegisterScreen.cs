@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using StrapiForUnity;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class LoginOrRegisterScreen : MonoBehaviour {
     public Text HeaderText;
@@ -24,11 +24,11 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     public InputField nameInput;
     public InputField surnameInput;
 
-    public StrapiComponent Strapi;
+    public StrapiComponent strapiComponent;
 
     // Start is called before the first frame update
     void Start() {
-        if (Strapi == null) {
+        if (strapiComponent == null) {
             Debug.LogError("No Strapi component found. Please make sure you've got an active Strapi component assigned to the LoginOrRegisterForm");
             return;
         }
@@ -39,8 +39,8 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     private void registerEventHandlers() {
-        Strapi.OnAuthSuccess += handleSuccessfulAuthentication;
-        Strapi.OnAuthFail += handleUnsuccessfulAuthentication;
+        strapiComponent.OnAuthSuccess += handleSuccessfulAuthentication;
+        strapiComponent.OnAuthFail += handleUnsuccessfulAuthentication;
     }
 
     // Update is called once per frame
@@ -93,11 +93,11 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     public void OnLoginSubmit() {
-        Strapi.Login(UsernameInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        strapiComponent.Login(UsernameInput.text, PasswordInput.text, RememberMeToggle.isOn);
     }
 
     public void OnRegisterSubmit() {
-        Strapi.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {

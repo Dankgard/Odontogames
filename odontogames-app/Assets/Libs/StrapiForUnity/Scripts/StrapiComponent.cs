@@ -30,9 +30,11 @@ public class StrapiComponent : MonoBehaviour
     private string userJWT = "";
     private string userID = "";
 
+    private StrapiUser[] users = null;
+    private StrapiGroup[] groups = null;
+
     //Singleton
-    private static StrapiComponent _instance;
-    public static StrapiComponent Instance { get { return _instance; } }
+    public static StrapiComponent _instance;
     
     protected virtual void Awake()
     {
@@ -40,14 +42,17 @@ public class StrapiComponent : MonoBehaviour
         {
             BaseURL += "/";
         }
-        
+
         //Singleton
-        if (_instance != null && _instance != this)
+        if (_instance == null)
         {
-            Destroy(this.gameObject);
-        } else {
             _instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            if (_instance != this)
+                Destroy(gameObject);
         }
 
         OnAuthSuccess += OnAuthSuccessHandler;
@@ -146,7 +151,6 @@ public class StrapiComponent : MonoBehaviour
                          "}";
 
         PostAuthRequest("api/auth/local", jsonString);
-        GetUsersRequest("api/users");
     }
 
     public void Register(string username, string name, string surname, string email, string password, bool rememberMe = false/*, Dictionary<string,string> extraAttributes = null*/) {
@@ -171,8 +175,6 @@ public class StrapiComponent : MonoBehaviour
         jsonString += "}";
 
         PostAuthRequest("api/auth/local/register", jsonString);
-
-        //GetUsers();
     }
 
     public virtual void DeleteAccount() {
@@ -196,9 +198,35 @@ public class StrapiComponent : MonoBehaviour
         }
     }
 
+    public void CreateRole(string name)
+    {
+        OnAuthStarted?.Invoke();
+        var jsonString = "{" +
+                         "\"name\":\"" + name + "\"";
+        jsonString += "}";
+
+        string endpoint = "api/users-permissions/roles";
+
+        PostAuthRequest(endpoint, jsonString);
+    }
+
+    public virtual void SetUserGroup(string group, StrapiUser user)
+    {
+        OnAuthStarted?.Invoke();
+        var jsonString = "{" +
+                         "\"username\":\"" + user.username + "\"," +
+                         "\"email\":\"" + user.email + "\"," +
+                         "\"Group\":\"" + group + "\"";
+        jsonString += "}";
+
+        string endpoint = "api/users/" + user.id;
+
+        PutRequest(endpoint, jsonString, userJWT);
+    }
+
     public virtual void PutRequest(string endpoint, string jsonString, string jwt)
     {
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + jwt;
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
         RestClient.Put<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
             OnAuthSuccess?.Invoke(authResponse);
@@ -215,7 +243,8 @@ public class StrapiComponent : MonoBehaviour
         userID = "";
     }
 
-    public virtual void PostAuthRequest(string endpoint, string jsonString) {
+    public virtual void PostAuthRequest(string endpoint, string jsonString)
+    {
         RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
             OnAuthSuccess?.Invoke(authResponse);
@@ -224,6 +253,10 @@ public class StrapiComponent : MonoBehaviour
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
         });
+
+
+        GetUsersRequest("api/users");
+        GetGroupsRequest("api/users-permissions/roles");
     }
 
     public virtual void GetAuthRequest(string endpoint)
@@ -240,7 +273,7 @@ public class StrapiComponent : MonoBehaviour
         });
     }
 
-    public virtual StrapiUser[] GetUsersRequest(string endpoint)
+    public virtual void GetUsersRequest(string endpoint)
     {
         OnAuthStarted?.Invoke();
         RestClient.GetArray<StrapiUser>(BaseURL + endpoint).Then(response =>
@@ -249,17 +282,51 @@ public class StrapiComponent : MonoBehaviour
             {
                 users = response
             };
+            users = userResponse.users;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
 
-            return userResponse.users;
+    public virtual void GetGroupsRequest(string endpoint)
+    {
+        OnAuthStarted?.Invoke();
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
+        RestClient.GetArray<StrapiGroup>(BaseURL + endpoint).Then(response =>
+        {
+            UserResponseGroups userResponse = new UserResponseGroups()
+            {
+                groups = response
+            };
+            groups = userResponse.groups;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+
+    public virtual int GetUserCount(string endpoint)
+    {
+        OnAuthStarted?.Invoke();
+        RestClient.Get<int>(BaseURL + endpoint).Then(response =>
+        {
+            //UserCountResponse userCountResponse = new UserCountResponse()
+            //{
+            //    count = response
+            //};
+            return 3;
         }).Catch(err =>
         {
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
 
-            return null;
+            return -2;
         });
 
-        return null;
+        return -1;
     }
 
     /// <summary>
@@ -272,7 +339,6 @@ public class StrapiComponent : MonoBehaviour
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + jwt;
         RestClient.Get<StrapiUser>(BaseURL + "api/users/me").Then(response =>
         {
-            Debug.Log(response);
             AuthResponse authResponse = new AuthResponse()
             {
                 jwt = jwt,
@@ -292,15 +358,9 @@ public class StrapiComponent : MonoBehaviour
         AuthenticatedUser = authResponse.user;
         userJWT = authResponse.jwt;
         userID = authResponse.user.id.ToString();
-        Debug.Log("Usuario " + authResponse.user.name);
         IsAuthenticated = true;
         
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
-
-        if (rememberMe && authResponse.jwt != null)
-        {
-            PlayerPrefs.SetString("jwt", userJWT);
-        }
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
     }
 
@@ -321,11 +381,21 @@ public class StrapiComponent : MonoBehaviour
 
     public String GetName()
     {
-        return AuthenticatedUser.name;
+        return AuthenticatedUser.Firstname;
     }
 
     public String GetSurname()
     {
-        return AuthenticatedUser.surname;
+        return AuthenticatedUser.Lastname;
+    }
+
+    public StrapiUser[] getUsers()
+    {
+        return users;
+    }
+
+    public StrapiGroup[] GetGroups()
+    {
+        return groups;
     }
 }
