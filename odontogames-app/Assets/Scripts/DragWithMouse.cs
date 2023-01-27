@@ -1,4 +1,4 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +6,15 @@ public class DragWithMouse : MonoBehaviour
 {
     private Vector3 mouseOffset;
     private float mouseZCoord;
+
+    public bool useRigidbody = false;
+    Rigidbody rb;
+
+    void Awake()
+    {
+        if (useRigidbody)
+            rb = gameObject.GetComponent<Rigidbody>();
+    }
 
     void OnMouseDown()
     {
@@ -20,8 +29,21 @@ public class DragWithMouse : MonoBehaviour
         return Camera.main.ScreenToWorldPoint(mousePoint);
     }
 
+    void OnMouseUp()
+    {
+        if (useRigidbody)
+            rb.velocity = Vector3.zero;
+    }
+
     void OnMouseDrag()
     {
-        transform.position = GetMouseWorldPos() + mouseOffset;
+        if(useRigidbody)
+        {
+            rb.velocity = GetMouseWorldPos() + mouseOffset;
+        }
+        else
+        {
+            transform.position = GetMouseWorldPos() + mouseOffset;
+        }
     }
 }
