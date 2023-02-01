@@ -134,6 +134,8 @@ GameObject:
   - component: {fileID: 28843915}
   - component: {fileID: 28843917}
   - component: {fileID: 28843916}
+  - component: {fileID: 28843919}
+  - component: {fileID: 28843918}
   m_Layer: 0
   m_Name: Answer1
   m_TagString: Untagged
@@ -141,20 +143,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &28843915
-Transform:
+--- !u!224 &28843915
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 28843914}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 77509008}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -15, y: -1}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!102 &28843916
 TextMesh:
   serializedVersion: 3
@@ -218,6 +225,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &28843918
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28843914}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 29.087135, y: 0.87140626, z: 0}
+  m_Center: {x: 14.543568, y: -0.43570313, z: 0}
+--- !u!114 &28843919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28843914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd774bd274327c498435d173f6120ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  answer: A
 --- !u!1 &77509006
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +263,7 @@ GameObject:
   - component: {fileID: 77509007}
   m_Layer: 0
   m_Name: Questions
-  m_TagString: Untagged
+  m_TagString: questions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -280,6 +313,12 @@ MonoBehaviour:
   - 'd. Voriconazol '
   - "d. Palatitis nicot\xEDnica "
   - "d. Puede asociarse a displasia y malignizaci\xF3n "
+  results:
+  - 
+  - 
+  - 
+  - 
+  - 
 --- !u!4 &77509008
 Transform:
   m_ObjectHideFlags: 0
@@ -312,7 +351,7 @@ GameObject:
   - component: {fileID: 279995715}
   m_Layer: 0
   m_Name: letter
-  m_TagString: Untagged
+  m_TagString: letter2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -502,7 +541,7 @@ GameObject:
   - component: {fileID: 471316916}
   m_Layer: 0
   m_Name: letter
-  m_TagString: Untagged
+  m_TagString: letter3
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -597,7 +636,7 @@ GameObject:
   - component: {fileID: 592384093}
   m_Layer: 0
   m_Name: letter
-  m_TagString: Untagged
+  m_TagString: letter1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -880,6 +919,8 @@ GameObject:
   - component: {fileID: 1219506778}
   - component: {fileID: 1219506780}
   - component: {fileID: 1219506779}
+  - component: {fileID: 1219506781}
+  - component: {fileID: 1219506782}
   m_Layer: 0
   m_Name: Answer4
   m_TagString: Untagged
@@ -887,20 +928,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1219506778
-Transform:
+--- !u!224 &1219506778
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1219506777}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15, y: -7, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 77509008}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -15, y: -7}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!102 &1219506779
 TextMesh:
   serializedVersion: 3
@@ -964,6 +1010,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1219506781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219506777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd774bd274327c498435d173f6120ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  answer: D
+--- !u!65 &1219506782
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219506777}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 29.632793, y: 0.87140626, z: 0}
+  m_Center: {x: 14.816397, y: -0.43570313, z: 0}
 --- !u!1 &1397060451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1171,7 +1243,7 @@ GameObject:
   - component: {fileID: 1463576816}
   m_Layer: 0
   m_Name: letter
-  m_TagString: Untagged
+  m_TagString: letter5
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1264,6 +1336,8 @@ GameObject:
   - component: {fileID: 1541679026}
   - component: {fileID: 1541679028}
   - component: {fileID: 1541679027}
+  - component: {fileID: 1541679029}
+  - component: {fileID: 1541679030}
   m_Layer: 0
   m_Name: Answer3
   m_TagString: Untagged
@@ -1348,6 +1422,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1541679029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541679025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd774bd274327c498435d173f6120ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  answer: C
+--- !u!65 &1541679030
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541679025}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 28.549738, y: 0.87140626, z: 0}
+  m_Center: {x: 14.274869, y: -0.43570313, z: 0}
 --- !u!1 &1567076008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,6 +1736,8 @@ GameObject:
   - component: {fileID: 1845813273}
   - component: {fileID: 1845813275}
   - component: {fileID: 1845813274}
+  - component: {fileID: 1845813276}
+  - component: {fileID: 1845813277}
   m_Layer: 0
   m_Name: Answer2
   m_TagString: Untagged
@@ -1720,6 +1822,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1845813276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845813272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd774bd274327c498435d173f6120ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  answer: B
+--- !u!65 &1845813277
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845813272}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 28.702774, y: 0.87140626, z: 0}
+  m_Center: {x: 14.351387, y: -0.43570313, z: 0}
 --- !u!1 &1999625295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1834,7 +1962,7 @@ GameObject:
   - component: {fileID: 2035489320}
   m_Layer: 0
   m_Name: letter
-  m_TagString: Untagged
+  m_TagString: letter4
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

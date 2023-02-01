@@ -16,6 +16,8 @@ public class escaperoom1_4_questions : MonoBehaviour
     TextMesh line4;
     TextMesh line5;
 
+    public string[] results;
+
     int currentQuestion = -1;
 
     void Awake()
@@ -40,5 +42,16 @@ public class escaperoom1_4_questions : MonoBehaviour
             line4.text = answer3[currentQuestion];
             line5.text = answer4[currentQuestion];
         }
+        else
+        {
+            // Terminar juego
+        }
+    }
+
+    public void ChooseAnswer(string answer)
+    {
+        results[currentQuestion] = answer;
+        GameObject.FindGameObjectWithTag("letter" + (currentQuestion + 1)).GetComponent<TextMesh>().text = answer;
+        NextQuestion();
     }
 }

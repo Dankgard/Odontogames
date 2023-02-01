@@ -22,6 +22,12 @@ TagManager:
   - image9
   - image10
   - wall
+  - questions
+  - letter1
+  - letter2
+  - letter3
+  - letter4
+  - letter5
   layers:
   - Default
   - TransparentFX
