@@ -10,7 +10,6 @@ public class LoginOrRegisterForm : MonoBehaviour {
     public Text HeaderText;
     public VerticalLayoutGroup ContainerLayout;
     public GameObject LoadingObject;
-    public Toggle RememberMeToggle;
 
     // Elementos para iniciar sesion
     public Button LoginSubmitButton;
@@ -201,8 +200,6 @@ public class LoginOrRegisterForm : MonoBehaviour {
         EditNameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditSurnameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
 
-        RememberMeToggle.gameObject.SetActive(false);
-
         HeaderText.text = "Profile Settings";
 
         forceLayoutUpdate();
@@ -244,12 +241,12 @@ public class LoginOrRegisterForm : MonoBehaviour {
 
     public void OnLoginSubmit()
     {
-        Strapi.Login(UsernameInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        Strapi.Login(UsernameInput.text, PasswordInput.text);
     }
 
     public void OnRegisterSubmit()
     {
-        Strapi.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        Strapi.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text);
     }
 
     private void toggleLoading()
@@ -271,7 +268,6 @@ public class LoginOrRegisterForm : MonoBehaviour {
         surnameInput.transform.parent.gameObject.SetActive(false);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
-        RememberMeToggle.gameObject.SetActive(false);
 
         DeleteAccountButton.gameObject.SetActive(true);
         EditProfileButton.gameObject.SetActive(true);

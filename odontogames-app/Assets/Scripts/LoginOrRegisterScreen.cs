@@ -9,7 +9,6 @@ using UnityEngine;
 public class LoginOrRegisterScreen : MonoBehaviour {
     public Text HeaderText;
     public VerticalLayoutGroup ContainerLayout;
-    public Toggle RememberMeToggle;
 
     // Elementos para iniciar sesion
     public Button LoginSubmitButton;
@@ -93,11 +92,11 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     public void OnLoginSubmit() {
-        strapiComponent.Login(UsernameInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        strapiComponent.Login(UsernameInput.text, PasswordInput.text);
     }
 
     public void OnRegisterSubmit() {
-        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, RememberMeToggle.isOn);
+        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text);
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {

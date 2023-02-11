@@ -141,7 +141,7 @@ public class StrapiComponent : MonoBehaviour
         return origin.AddSeconds(timestamp);
     }
     
-    public void Login(string username, string password, bool rememberMe = false) {
+    public void Login(string username, string password) {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
         
@@ -153,16 +153,16 @@ public class StrapiComponent : MonoBehaviour
         PostAuthRequest("api/auth/local", jsonString);
     }
 
-    public void Register(string username, string name, string surname, string email, string password, bool rememberMe = false/*, Dictionary<string,string> extraAttributes = null*/) {
+    public void Register(string username, string name, string surname, string email, string password/*, Dictionary<string,string> extraAttributes = null*/) {
         OnAuthStarted?.Invoke();
         this.rememberMe = rememberMe;
 
         var jsonString = "{" +
                          "\"username\":\"" + username + "\"," +
-                         "\"name\":\"" + name + "\"," +
-                         "\"surname\":\"" + surname + "\"," +
                          "\"email\":\"" + email + "\"," +
-                         "\"password\":\"" + password + "\"";
+                         "\"password\":\"" + password + "\"," +
+                         "\"Firstname\":\"" + name + "\"," +
+                         "\"Lastname\":\"" + surname + "\"";
 
         //if (extraAttributes != null && extraAttributes.Count > 0)
         //{
@@ -173,6 +173,8 @@ public class StrapiComponent : MonoBehaviour
         //    jsonString = jsonString.Remove(jsonString.Length - 1); // removes the final trailing comma
         //}
         jsonString += "}";
+
+        Debug.Log(username + " " + email + " " + password + " " + name + " " + surname);
 
         PostAuthRequest("api/auth/local/register", jsonString);
     }

@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
 {
     public Button globalUserListButton;
     public Button teamsButton;
-    public Button newGroupMenuButton;
+    public Button playMenuButton;
 
     // Start is called before the first frame update
     void Start()
@@ -29,9 +29,9 @@ public class MainMenu : MonoBehaviour
             {
                 teamsButton.onClick.Invoke();
             }
-            else if (newGroupMenuButton.IsActive())
+            else if (playMenuButton.IsActive())
             {
-                newGroupMenuButton.onClick.Invoke();
+                playMenuButton.onClick.Invoke();
             }
         }
     }
@@ -46,8 +46,9 @@ public class MainMenu : MonoBehaviour
         SceneHandler.instance.LoadScene("TeamsLists");
     }
 
-    public void OnNewGroupMenu()
+    public void OnPlayLevelMenu()
     {
-        SceneHandler.instance.LoadScene("CreateNewGroup");
+        //SceneHandler.instance.LoadScene("CreateNewGroup");
+        SceneHandler.instance.LoadScene("PlayLevelMenu");
     }
 }
