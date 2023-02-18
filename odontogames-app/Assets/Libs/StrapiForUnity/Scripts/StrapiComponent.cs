@@ -142,9 +142,7 @@ public class StrapiComponent : MonoBehaviour
     }
     
     public void Login(string username, string password) {
-        OnAuthStarted?.Invoke();
-        this.rememberMe = rememberMe;
-        
+        OnAuthStarted?.Invoke();        
         var jsonString = "{" +
                          "\"identifier\":\"" + username + "\"," +
                          "\"password\":\"" + password + "\"" +
@@ -155,7 +153,6 @@ public class StrapiComponent : MonoBehaviour
 
     public void Register(string username, string name, string surname, string email, string password/*, Dictionary<string,string> extraAttributes = null*/) {
         OnAuthStarted?.Invoke();
-        this.rememberMe = rememberMe;
 
         var jsonString = "{" +
                          "\"username\":\"" + username + "\"," +
@@ -182,22 +179,30 @@ public class StrapiComponent : MonoBehaviour
     public virtual void DeleteAccount() {
         OnAuthStarted?.Invoke();
         string endpoint = "api/users/" + userID;
+        DeleteRequest(endpoint);
     }
 
-    public virtual void EditProfile(string username)
+    public virtual void EditProfile(string username = "", string email = "", string password = "", string name = "", string surname = "")
     {
-        if (username != AuthenticatedUser.username)
-        {
-            OnAuthStarted?.Invoke();
-            var jsonString = "{" +
-                         "\"username\":\"" + username + "\"," +
-                         "\"email\":\"" + AuthenticatedUser.email + "\"," +
-                         "\"password\":\"" + "new password" + "\"";
-            jsonString += "}";
+        string[] data = new string[5];
 
-            string endpoint = "api/users/" + AuthenticatedUser.id.ToString();
-            PutRequest(endpoint, jsonString, userJWT);
-        }
+        data[0] = username != "" ? username : AuthenticatedUser.username;
+        data[1] = email != "" ? email : AuthenticatedUser.email;
+        data[2] = password != "" ? password : AuthenticatedUser.password;
+        data[3] = name != "" ? name : AuthenticatedUser.Firstname;
+        data[4] = surname != "" ? surname : AuthenticatedUser.Lastname;
+
+        OnAuthStarted?.Invoke();
+        var jsonString = "{" +
+                     "\"username\":\"" + data[0] + "\"," +
+                     "\"email\":\"" + data[1] + "\"," +
+                     "\"password\":\"" + AuthenticatedUser.password + "\"," +
+                     "\"Firstname\":\"" + data[3] + "\"," +
+                     "\"Lastname\":\"" + data[4] + "\"";
+        jsonString += "}";
+
+        string endpoint = "api/users/" + AuthenticatedUser.id.ToString();
+        PutRequest(endpoint, jsonString, userJWT);
     }
 
     public void CreateRole(string name)
@@ -226,11 +231,13 @@ public class StrapiComponent : MonoBehaviour
         PutRequest(endpoint, jsonString, userJWT);
     }
 
-    public virtual void PutRequest(string endpoint, string jsonString, string jwt)
+    public void PutRequest(string endpoint, string jsonString, string jwt)
     {
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
+        OnAuthStarted?.Invoke();
         RestClient.Put<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
+            // NO ENTRA AQUI
+            Debug.Log("1");
             OnAuthSuccess?.Invoke(authResponse);
         }).Catch(err =>
         {
@@ -247,6 +254,7 @@ public class StrapiComponent : MonoBehaviour
 
     public virtual void PostAuthRequest(string endpoint, string jsonString)
     {
+        OnAuthStarted?.Invoke();
         RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
         {
             OnAuthSuccess?.Invoke(authResponse);
@@ -364,6 +372,7 @@ public class StrapiComponent : MonoBehaviour
         
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
+        Debug.Log("JWT " + userJWT);
     }
 
     public String GetUsername()

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class EditProfilePlaceholderText : MonoBehaviour
 {
-    public StrapiComponent strapiComponent;
     public string dataName;
 
     public void ShowText()
@@ -13,19 +12,19 @@ public class EditProfilePlaceholderText : MonoBehaviour
         switch (dataName)
         {
             case "Username":
-                GetComponent<InputField>().text = strapiComponent.GetUsername();
+                GetComponent<InputField>().text = StrapiComponent._instance.GetUsername();
                 break;
             case "Email":
-                GetComponent<InputField>().text = strapiComponent.GetEmail();
+                GetComponent<InputField>().text = StrapiComponent._instance.GetEmail();
                 break;
             case "Password":
-                GetComponent<InputField>().text = strapiComponent.GetPassword();
+                GetComponent<InputField>().text = StrapiComponent._instance.GetPassword();
                 break;
-            case "Name":
-                GetComponent<InputField>().text = strapiComponent.GetName();
+            case "FirstName":
+                GetComponent<InputField>().text = StrapiComponent._instance.GetName();
                 break;
-            case "Surname":
-                GetComponent<InputField>().text = strapiComponent.GetSurname();
+            case "LastName":
+                GetComponent<InputField>().text = StrapiComponent._instance.GetSurname();
                 break;
             default:
                 break;

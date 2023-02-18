@@ -41,6 +41,11 @@ public class MainMenu : MonoBehaviour
         SceneHandler.instance.LoadScene("GlobalUserList");
     }
 
+    public void OnProfileMenu()
+    {
+        SceneHandler.instance.LoadScene("ProfileMenu");
+    }
+
     public void OnTeamsListMenu()
     {
         SceneHandler.instance.LoadScene("TeamsLists");
