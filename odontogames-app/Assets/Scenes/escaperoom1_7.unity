@@ -564,7 +564,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 777891474}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1155914733}
+        m_TargetAssemblyTypeName: escaperoom1_7_circle, Assembly-CSharp
+        m_MethodName: SkipAnswer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &777891474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,7 +763,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1016871364}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1155914733}
+        m_TargetAssemblyTypeName: escaperoom1_7_circle, Assembly-CSharp
+        m_MethodName: CorrectAnswer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1016871364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,6 +863,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 6b3a0d9dafa3bd14db30b9ec3d2e2168, type: 2}
   - {fileID: 2100000, guid: 4bbd996061850e044a8c2b98266d4bf0, type: 2}
   - {fileID: 2100000, guid: 7d34a63a0b2176e42829647d2de5ae1a, type: 2}
+  activeColor: {fileID: 2100000, guid: a980417c91d8ad94d9aea0b9aff6c5fb, type: 2}
+  blackColor: {fileID: 2100000, guid: fb24dcc35ec122347a475ef7ab6256b1, type: 2}
 --- !u!1 &1161884812
 GameObject:
   m_ObjectHideFlags: 0
