@@ -1,11 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class escaperoom1_7_circle : MonoBehaviour
 {
     public GameObject letter;
-    int numberOfLetters = 26;
+    public TextMesh hint;
+    public TextMesh question;
+    public GameObject questionsManager;
+
+    public InputField answerInput;
+
+    private int index;
+    private string[] lettersJSON;
+    private string[] hints;
+    private string[] questions;
+    private string[] answers;
+
+    private int numberOfLetters = 26;
     public float radius = 5f;
     string circleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -25,6 +38,10 @@ public class escaperoom1_7_circle : MonoBehaviour
         letters = new GameObject[numberOfLetters+1];
         letterStatus = new int[numberOfLetters + 1];
         availableLetters = numberOfLetters;
+    }
+
+    void Start()
+    {
         SpawnCircle();
     }
 
@@ -44,6 +61,17 @@ public class escaperoom1_7_circle : MonoBehaviour
         transform.Rotate(Vector3.right, 90f);
         LoadLetterMaterial(0);
         letters[activeLetter].GetComponent<Renderer>().material = activeColor;
+
+        // Para las preguntas
+        index = 0;
+
+        lettersJSON = questionsManager.GetComponent<escaperoom1_7_questions>().GetLetters();
+        hints = questionsManager.GetComponent<escaperoom1_7_questions>().GetHints();
+        questions = questionsManager.GetComponent<escaperoom1_7_questions>().GetQuestions();
+        answers = questionsManager.GetComponent<escaperoom1_7_questions>().GetAnswers();
+
+        hint.text = hints[index];
+        question.text = questions[index];
     }
 
     void LoadLetterMaterial(int color)
@@ -53,7 +81,7 @@ public class escaperoom1_7_circle : MonoBehaviour
 
     void NextLetter()
     {
-        if(activeLetter < numberOfLetters-1)
+        if (activeLetter < numberOfLetters - 1)
         {
             letters[activeLetter].GetComponent<Renderer>().material = blackColor;
             activeLetter++;
@@ -64,20 +92,27 @@ public class escaperoom1_7_circle : MonoBehaviour
             letters[numberOfLetters - 1].GetComponent<Renderer>().material = blackColor;
             activeLetter = 0;
             letters[0].GetComponent<Renderer>().material = activeColor;
+            index = 0;
         }
 
-        if(letterStatus[activeLetter] == 1 || letterStatus[activeLetter] == 2)
+        index++;
+        if (letterStatus[activeLetter] == 1 || letterStatus[activeLetter] == 2 || circleLetters[activeLetter].ToString() != lettersJSON[index].Trim('"'))
         {
+            availableLetters--;
+            index--;
             SkipAnswer();
         }
+
+        hint.text = hints[index];
+        question.text = questions[index];
     }
 
     public void SkipAnswer()
     {
-        if(availableLetters > 0)
+        if (availableLetters > 0)
         {
             NextLetter();
-            if(letterStatus[activeLetter] != 1 || letterStatus[activeLetter] != 2)
+            if (letterStatus[activeLetter] != 1 || letterStatus[activeLetter] != 2)
             {
                 LoadLetterMaterial(0);
                 letterStatus[activeLetter] = 0;
@@ -89,9 +124,21 @@ public class escaperoom1_7_circle : MonoBehaviour
         }
     }
 
+    public void CheckAnswer()
+    {
+        if (answerInput.text.ToLower() == answers[index].Trim('"').ToLower())
+        {
+            CorrectAnswer();
+        }
+        else WrongAnswer();
+
+        answerInput.text = "";
+    }
+
     public void CorrectAnswer()
     {
-        if(availableLetters > 0)
+        Debug.Log(availableLetters);
+        if (availableLetters > 0)
         {
             LoadLetterMaterial(1);
             letterStatus[activeLetter] = 1;
@@ -106,7 +153,8 @@ public class escaperoom1_7_circle : MonoBehaviour
 
     void WrongAnswer()
     {
-        if(availableLetters > 0)
+        Debug.Log(availableLetters);
+        if (availableLetters > 0)
         {
             LoadLetterMaterial(2);
             letterStatus[activeLetter] = 2;
