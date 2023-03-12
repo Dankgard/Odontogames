@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class Tracker : MonoBehaviour
 {
-    public GameObject player;
-    public float offsetX = 0.0f;
-    public float offsetY = 5.0f;
-    public float offsetZ = 10.0f;
+    public float sensitivity = 100.0f;
+    public Transform playerBody;
 
-    void LateUpdate()
+    private float rotationX = 0.0f;
+
+    void Start()
     {
-        transform.position = new Vector3(player.transform.position.x, player.transform.position.y + offsetY, player.transform.position.z - offsetZ);
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    void Update()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+
+        rotationX -= mouseY;
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+
+        transform.localRotation = Quaternion.Euler(rotationX, 0.0f, 0.0f);
+        playerBody.Rotate(Vector3.up * mouseX);
     }
 }

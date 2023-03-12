@@ -4,19 +4,53 @@ using UnityEngine;
 
 public class PlayerBehavior : MonoBehaviour
 {
-    public float sensitivity_movement = 0.05f;
-    public float sensitivity_camera = 0.5f;
+    public float speed = 6.0f;
+    public float sensitivity = 2.0f;
 
-    private Vector2 turn = new Vector2(0, 0);
+    private CharacterController controller;
+    private float rotationX = 0.0f;
+    private float rotationY = 0.0f;
 
-    void LateUpdate() {
-        float horizontalInput = Input.GetAxis("Horizontal") * sensitivity_movement;
-        float verticalInput = Input.GetAxis("Vertical") * sensitivity_movement;
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
-        turn.x += Input.GetAxis("Mouse X") * sensitivity_camera;
-        turn.y += Input.GetAxis("Mouse Y") * sensitivity_camera;
+    void Update()
+    {
+        // Rotación de la cámara con el cursor del mouse en PC
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+        rotationX += Input.GetAxis("Mouse X") * sensitivity;
+        rotationY += Input.GetAxis("Mouse Y") * sensitivity;
+        rotationY = Mathf.Clamp(rotationY, -90f, 90f);
 
-        transform.position = new Vector3(transform.position.x + horizontalInput, transform.position.y, transform.position.z + verticalInput);
-        transform.localRotation = Quaternion.Euler(-turn.y, turn.x, 0);
+        transform.localRotation = Quaternion.Euler(0, rotationX, 0);
+        Camera.main.transform.localRotation = Quaternion.Euler(-rotationY, 0, 0);
+#endif
+
+        // Rotación de la cámara con entrada táctil en dispositivos móviles
+#if UNITY_ANDROID || UNITY_IOS
+        if (Input.touchCount > 0) {
+            rotationX += Input.GetTouch(0).deltaPosition.x * sensitivity;
+            rotationY += Input.GetTouch(0).deltaPosition.y * sensitivity;
+            rotationY = Mathf.Clamp(rotationY, -90f, 90f);
+
+            transform.localRotation = Quaternion.Euler(0, rotationX, 0);
+            Camera.main.transform.localRotation = Quaternion.Euler(-rotationY, 0, 0);
+        }
+#endif
+
+        // Movimiento horizontal y vertical
+        float horizontal = Input.GetAxis("Horizontal") * speed;
+        float vertical = Input.GetAxis("Vertical") * speed;
+        Vector3 movement = transform.forward * vertical + transform.right * horizontal;
+        controller.SimpleMove(movement);
+
+        // Desbloquear cursor
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 }
