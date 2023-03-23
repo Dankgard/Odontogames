@@ -21,7 +21,6 @@ public class PopUpText : MonoBehaviour
     {
         if (show)
         {
-            //interactText.enabled = true;
             interactText.text = "Presiona 'E' para interactuar";
         }
         else

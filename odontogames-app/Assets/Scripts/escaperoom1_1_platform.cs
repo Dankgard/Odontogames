@@ -4,54 +4,41 @@ using UnityEngine;
 
 public class escaperoom1_1_platform : MonoBehaviour
 {
-    public int requiredImages;
-    public int imageSize;
+    public GameObject littlePlatform;
+    public GameObject bigPlatform;
 
-    private Vector3 newPos;
+    public int numPositions;
+    public int displacementSize;
 
-    private int images = 0;
+    private Vector3 currentPosition;
+
     private bool moving = false;
     private bool working = true;
 
     void Start()
     {
-        newPos = transform.position;
+        currentPosition = transform.position;
     }
 
     void Update()
     {
         if (moving)
         {
-            transform.position = Vector3.MoveTowards(transform.position, newPos, 0.5f);
-        }
-
-        if (images == requiredImages && working)
-            GrowPlatform();
-    }
-
-    void OnCollisionEnter(Collision col)
-    {
-        if (images < requiredImages)
-        {
-            if (col.gameObject.tag == "image")
-            {
-                moving = true;
-                newPos.y -= imageSize;
-                images++;
-                Destroy(col.gameObject);
-            }
+            transform.position = Vector3.MoveTowards(transform.position, currentPosition, 0.5f);
         }
     }
 
-    void OnCollisionExit(Collision col)
+    public void UpdatePlatform()
     {
-        //collision = false;
+        moving = true;
+        currentPosition.y -= displacementSize;
     }
 
-    void GrowPlatform()
+    public void PlatformFinished()
     {
         working = false;
-        transform.localScale = new Vector3(4, 0.2f, 1);
+        littlePlatform.SetActive(false);
+        bigPlatform.SetActive(true);
         GameObject.FindGameObjectWithTag("robot").GetComponent<escaperoom1_1_robot>().AddCompletedPlatform();
     }
 }
