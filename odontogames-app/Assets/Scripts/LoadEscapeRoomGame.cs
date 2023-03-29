@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LoadEscapeRoomGame : MonoBehaviour
 {
-    public int escapeRoom;
-    public int game;
+    public string level;
 
-    public void LoadGame()
+    public void Start()
     {
-       SceneHandler.instance.LoadScene("escaperoom" + escapeRoom + "_" + game);
+        transform.GetChild(0).transform.GetComponent<Text>().text = level;
+    }
+
+    public void LoadLevel()
+    {
+        SceneHandler.instance.LoadScene(level);
     }
 }

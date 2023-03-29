@@ -13,8 +13,6 @@ public class Escaperom1_2_logic : MonoBehaviour
     public GameObject player;
 
     public float interactDistance = 15f;
-    public float distanceFromMaze = 15f;
-    public float moveSpeed = 5.0f;
 
     public GameObject timer;
 

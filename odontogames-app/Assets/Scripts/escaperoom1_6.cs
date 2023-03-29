@@ -41,9 +41,12 @@ public class escaperoom1_6 : MonoBehaviour
             indexes = new List<int>(wordLength);
             indexes.Add(-1);
 
+            GameObject son = transform.GetChild(0).gameObject;
             for (int j = 0; j < wordLength; j++)
             {
                 GameObject box = Instantiate(boxPrefab, new Vector3(posX + cubeSize * cont, posY, 0), Quaternion.identity);
+                box.transform.parent = son.transform;
+
                 boxes[i, j] = box;
 
                 GameObject cube = Instantiate(letterBoxPrefab, new Vector3(posX + cubeSize * cont, posY, 0), Quaternion.identity);
