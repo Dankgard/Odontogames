@@ -13,6 +13,7 @@ using UnityEngine;
         public bool confirmed;
         public string Firstname;
         public string Lastname;
+        public string group;
 
         [SerializeField]
         private string created_at;

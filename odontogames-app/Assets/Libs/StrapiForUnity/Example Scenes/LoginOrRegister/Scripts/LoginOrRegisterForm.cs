@@ -207,7 +207,7 @@ public class LoginOrRegisterForm : MonoBehaviour {
 
     public void SubmitRequest()
     {
-        Strapi.EditProfile(EditUsernameInput.text);
+        //Strapi.EditProfile(EditUsernameInput.text);
 
         UsernameInput.transform.parent.gameObject.SetActive(false);
         EmailInput.transform.parent.gameObject.SetActive(false);

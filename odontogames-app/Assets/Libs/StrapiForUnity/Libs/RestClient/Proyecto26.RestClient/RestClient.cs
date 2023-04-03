@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
 
@@ -293,6 +294,7 @@ namespace Proyecto26
         public static void Put(string url, string bodyString, Action<RequestException, ResponseHelper> callback)
         {
             Put(new RequestHelper { Uri = url, BodyString = bodyString }, callback);
+            Debug.Log(bodyString);
         }
 
         /// <summary>
