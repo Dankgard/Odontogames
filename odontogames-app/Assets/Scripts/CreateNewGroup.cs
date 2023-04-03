@@ -50,6 +50,6 @@ public class CreateNewGroup : MonoBehaviour {
     }
 
     public void OnBackPressed() {
-        SceneHandler.instance.LoadScene("MainMenu");
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 }

@@ -170,5 +170,6 @@ public class escaperoom1_7_circle : MonoBehaviour
     void EndOfGame()
     {
         Debug.Log("Game ended");
+        MySceneManager.instance.LoadScene("MinigameEnd");
     }
 }

@@ -14,6 +14,6 @@ public class LoadEscapeRoomGame : MonoBehaviour
 
     public void LoadLevel()
     {
-        SceneHandler.instance.LoadScene(level);
+        MySceneManager.instance.LoadScene(level);
     }
 }

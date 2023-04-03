@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneHandler : MonoBehaviour
+public class MySceneManager : MonoBehaviour
 {
-    public static SceneHandler instance;
+    public static MySceneManager instance;
 
     private void Awake()
     {

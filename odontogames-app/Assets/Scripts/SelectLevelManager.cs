@@ -33,7 +33,7 @@ public class SelectLevelManager : MonoBehaviour
 
     public void LoadLevel(string level)
     {
-        SceneHandler.instance.LoadScene(level);
+        MySceneManager.instance.LoadScene(level);
     }
 
 }

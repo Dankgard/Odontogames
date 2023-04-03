@@ -38,22 +38,22 @@ public class MainMenu : MonoBehaviour
 
     public void OnGlobalUserList()
     {
-        SceneHandler.instance.LoadScene("GlobalUserList");
+        MySceneManager.instance.LoadScene("GlobalUserList");
     }
 
     public void OnProfileMenu()
     {
-        SceneHandler.instance.LoadScene("ProfileMenu");
+        MySceneManager.instance.LoadScene("ProfileMenu");
     }
 
     public void OnTeamsListMenu()
     {
-        SceneHandler.instance.LoadScene("TeamsLists");
+        MySceneManager.instance.LoadScene("TeamsLists");
     }
 
     public void OnPlayLevelMenu()
     {
         //SceneHandler.instance.LoadScene("CreateNewGroup");
-        SceneHandler.instance.LoadScene("PlayLevelMenu");
+        MySceneManager.instance.LoadScene("PlayLevelMenu");
     }
 }

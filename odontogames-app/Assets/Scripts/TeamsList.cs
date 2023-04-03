@@ -30,7 +30,7 @@ public class TeamsList : MonoBehaviour
 
     public void OnBackPressed()
     {
-        SceneHandler.instance.LoadScene("MainMenu");
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 
     IEnumerator waiter()

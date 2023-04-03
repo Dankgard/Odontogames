@@ -56,6 +56,7 @@ public class escaperoom1_2_player : MonoBehaviour
             if (currentQuestion == 11)
             {
                 finishedGame = true;
+                MySceneManager.instance.LoadScene("MinigameEnd");
             }
                 
         }

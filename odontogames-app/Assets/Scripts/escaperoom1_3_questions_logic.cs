@@ -53,6 +53,9 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
             feedbackText.text = wrongAnswerMessage;
         }
         answerInputField.text = "";
+
+        if (index == questions.Length)
+            MySceneManager.instance.LoadScene("MinigameEnd");
     }
 
     public bool checkAnswer(string answer, int index)

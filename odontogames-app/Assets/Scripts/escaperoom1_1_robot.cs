@@ -23,6 +23,10 @@ public class escaperoom1_1_robot : MonoBehaviour
     {
         if (moving)
             CrossToOtherSide();
+
+        if (transform.position == target.transform.position)
+            MySceneManager.instance.LoadScene("MinigameEnd");
+
     }
 
     void CrossToOtherSide()

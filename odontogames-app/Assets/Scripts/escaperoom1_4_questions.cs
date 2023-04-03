@@ -44,7 +44,7 @@ public class escaperoom1_4_questions : MonoBehaviour
         }
         else
         {
-            // Terminar juego
+            MySceneManager.instance.LoadScene("MinigameEnd");
         }
     }
 

@@ -63,6 +63,6 @@ public class ProfileMenu : MonoBehaviour
 
     public void backToMainMenu()
     {
-        SceneHandler.instance.LoadScene("MainMenu");
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 }

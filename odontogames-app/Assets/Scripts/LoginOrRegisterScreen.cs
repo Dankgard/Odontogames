@@ -100,7 +100,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {
-        SceneHandler.instance.LoadScene("MainMenu");
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 
     private void handleUnsuccessfulAuthentication(Exception error) {

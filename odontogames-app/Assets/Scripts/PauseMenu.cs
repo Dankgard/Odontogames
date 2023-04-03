@@ -53,6 +53,6 @@ public class PauseMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        SceneHandler.instance.LoadScene("PlayLevelMenu");
+        MySceneManager.instance.LoadScene("PlayLevelMenu");
     }
 }
