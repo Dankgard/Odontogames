@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.Collections;
 using LitJson;
 using StrapiForUnity;
@@ -19,30 +19,30 @@ public class StrapiComponent : MonoBehaviour
 {
     // this event acctivates when the authentication petition is successful
     // This var is a list of delegated methods that execute on success
-    public event Action<AuthResponse> OnAuthSuccess = delegate {  };
+    public event Action<AuthResponse> OnAuthSuccess = delegate { };
 
     // This event activates when there is an authentication error, that is to say
     // when the server returns an error
     // This var is a list of delegated methods that execute on success
-    public event Action<Exception> OnAuthFail = delegate {  };
+    public event Action<Exception> OnAuthFail = delegate { };
 
     // This event activates when an authentication petition is started, that is to say
     // when the petition is sent to the server
     // This var is a list of delegated methods that execute on success
-    public event Action OnAuthStarted = delegate {  };
+    public event Action OnAuthStarted = delegate { };
 
     // This event is activated when no JWT is found to be stored in the app
     // This var is a list of delegated methods that execute on success
     public event Action NoStoredJWT = delegate { };
 
     public event Action deleteAccount = delegate { };
-    
+
     [Tooltip("The root URL of your Strapi server. For example: http://localhost:1337")]
     public string BaseURL;
-    
+
     [Tooltip("The secret key used for creating the JWT on your Strapi server. This is used to check that the stored JWT is valid. The secret can be found in your Strapi installation, at 'strapi/extensions/users-permissions/config/jwt.js'")]
     public string JWTSecret;
-    
+
     public StrapiUser AuthenticatedUser;
     public bool IsAuthenticated = false;
     public string ErrorMessage;
@@ -51,11 +51,17 @@ public class StrapiComponent : MonoBehaviour
     private string userID = "";
 
     private StrapiUser[] users = null;
-    private StrapiGroup[] groups = null;
+    private StrapiTeamsData[] teams = null;
+
+    //private StrapiRole[] roles;
+
+    public int profesorRoleID = 10;
+    public int studentRoleID = 11;
+    private StrapiUserTeam strapiUserTeam;
 
     // Singleton
     public static StrapiComponent _instance;
-    
+
     protected virtual void Awake()
     {
         if (!BaseURL.EndsWith("/"))
@@ -139,7 +145,7 @@ public class StrapiComponent : MonoBehaviour
 
         return false;
     }
-    
+
     /// <summary>
     /// Converts a Unix timestamp into a System.DateTime
     /// </summary>
@@ -149,267 +155,6 @@ public class StrapiComponent : MonoBehaviour
     {
         DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
         return origin.AddSeconds(timestamp);
-    }
-    
-    public void Login(string username, string password) {
-        OnAuthStarted?.Invoke();        
-        var jsonString = "{" +
-                         "\"identifier\":\"" + username + "\"," +
-                         "\"password\":\"" + password + "\"" +
-                         "}";
-
-        PostAuthRequest("api/auth/local", jsonString);
-    }
-
-    public void Register(string username, string name, string surname, string email, string password) {
-        OnAuthStarted?.Invoke();
-        var jsonString = "{" +
-                         "\"username\":\"" + username + "\"," +
-                         "\"email\":\"" + email + "\"," +
-                         "\"password\":\"" + password + "\"," +
-                         "\"Firstname\":\"" + name + "\"," +
-                         "\"Lastname\":\"" + surname + "\"";
-        jsonString += "}";
-
-        PostAuthRequest("api/auth/local/register", jsonString);
-    }
-
-    public virtual void DeleteAccount() {
-        OnAuthStarted?.Invoke();
-        string endpoint = "api/users/" + userID;
-        DeleteRequest(endpoint);
-    }
-
-    public virtual void EditProfile(string username = "", string email = "", string password = "", string name = "", string surname = "")
-    {
-        OnAuthStarted?.Invoke();
-
-        string jsonString = "{";
-        if (username != "" && username != AuthenticatedUser.username)
-        {
-            jsonString += "\"username\":\"" + username + "\",";
-        }
-
-        if (email != "" && email != AuthenticatedUser.email)
-        {
-            jsonString += "\"email\":\"" + email + "\",";
-        }
-
-        if (password != "" && password != AuthenticatedUser.password)
-        {
-            jsonString += "\"password\":\"" + password + "\",";
-        }
-
-        if (name != "" && name != AuthenticatedUser.Firstname)
-        {
-            jsonString += "\"Firstname\":\"" + name + "\",";
-        }
-
-        if (surname != "" && surname != AuthenticatedUser.Lastname)
-        {
-            jsonString += "\"Lastname\":\"" + surname + "\",";
-        }
-        jsonString = jsonString.TrimEnd(',');
-        jsonString += "}";
-
-        Debug.Log(jsonString);
-
-        if (jsonString != "{}")
-        {
-            string id = AuthenticatedUser.id.ToString();
-            string endpoint = $"api/users/{id}";
-
-            PutRequest(endpoint, jsonString);
-            UpdateUser(endpoint);
-        }
-        else
-        {
-            Debug.Log("No changes submitted");
-            return;
-        }
-    }
-
-    public void CreateRole(string name)
-    {
-        OnAuthStarted?.Invoke();
-        var jsonString = "{" +
-                         "\"name\":\"" + name + "\"";
-        jsonString += "}";
-
-        string endpoint = "api/users-permissions/roles";
-
-        PostAuthRequest(endpoint, jsonString);
-    }
-
-    public virtual void SetUserGroup(string group, StrapiUser user)
-    {
-        OnAuthStarted?.Invoke();
-
-        var jsonString = AuthenticatedUser;
-        jsonString.group = group;
-
-        string endpoint = "api/users/" + user.id;
-
-        //PutRequest(endpoint, jsonString);
-    }
-
-    public virtual void PutRequest(string endpoint, string jsonString, bool requieresAuth = true)
-    {
-        string url = BaseURL + endpoint;
-        OnAuthStarted?.Invoke();
-
-        if (requieresAuth && !IsAuthenticated)
-        {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        RestClient.Put<AuthResponse>(url, jsonString).Then(authResponse =>
-        {
-            Debug.Log("PUT request succeeded!");
-        })
-        .Catch(err =>
-        {
-            // Handle error
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public virtual void DeleteRequest(string endpoint)
-    {
-        if (!IsAuthenticated) { 
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        RestClient.Delete(BaseURL + endpoint).Then(response =>
-        {
-            Debug.Log($"Successfully deleted data at {endpoint}");
-        })
-        .Catch(err =>
-        {
-            Debug.LogError($"Error deleting data at {endpoint}: {err}");
-        });
-
-        //RestClient.Delete(BaseURL + endpoint);
-        //userID = "";
-    }
-
-    // This method makes a HTTP POST request to the server, receiving an AuthResponse if the operation
-    // is successful. A request of this type is used to create new resources in the server's data base
-    public virtual void PostAuthRequest(string endpoint, string jsonString)
-    {
-        OnAuthStarted?.Invoke();
-        RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
-        {
-            OnAuthSuccess?.Invoke(authResponse);
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-
-
-        GetUsersRequest("api/users");
-        GetGroupsRequest("api/users-permissions/roles");
-    }
-
-    public virtual void UpdateUser(string endpoint, bool IsAuthenticated = true)
-    {
-        string url = BaseURL + endpoint;
-        if (!IsAuthenticated)
-        {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        OnAuthStarted?.Invoke();
-        RestClient.Get<StrapiUser>(url).Then(userResponse =>
-        {
-            AuthenticatedUser = userResponse;
-
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public virtual void GetAuthRequest(string endpoint)
-    {
-        if (!IsAuthenticated)
-        {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        OnAuthStarted?.Invoke();
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
-        RestClient.Get<AuthResponse>(BaseURL + endpoint).Then(authResponse =>
-        {
-            OnAuthSuccess?.Invoke(authResponse);
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public virtual void GetUsersRequest(string endpoint)
-    {
-        OnAuthStarted?.Invoke();
-        RestClient.GetArray<StrapiUser>(BaseURL + endpoint).Then(response =>
-        {
-            UserResponse userResponse = new UserResponse()
-            {
-                users = response
-            };
-            users = userResponse.users;
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public virtual void GetGroupsRequest(string endpoint)
-    {
-        OnAuthStarted?.Invoke();
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
-        RestClient.GetArray<StrapiGroup>(BaseURL + endpoint).Then(response =>
-        {
-            UserResponseGroups userResponse = new UserResponseGroups()
-            {
-                groups = response
-            };
-            groups = userResponse.groups;
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public virtual int GetUserCount(string endpoint)
-    {
-        OnAuthStarted?.Invoke();
-        RestClient.Get<int>(BaseURL + endpoint).Then(response =>
-        {
-            //UserCountResponse userCountResponse = new UserCountResponse()
-            //{
-            //    count = response
-            //};
-            return 3;
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-
-            return -2;
-        });
-
-        return -1;
     }
 
     // This method is used to login with an authentication token
@@ -433,6 +178,169 @@ public class StrapiComponent : MonoBehaviour
         });
     }
 
+    // AQUI EMPIEZAN LOS METODOS DE USUARIO
+    #region USER_SERVER_FUNCTIONS
+    #region RegisterFunctions
+    public void Register(string username, string name, string surname, string email, string password, bool isTeacher = false)
+    {
+        StartCoroutine(RegisterCoroutine(username, name, surname, email, password, isTeacher));
+    }
+
+    public IEnumerator RegisterCoroutine(string username, string name, string surname, string email, string password, bool isTeacher)
+    {
+        OnAuthStarted?.Invoke();
+        var jsonString = "{" +
+                         "\"username\":\"" + username + "\"," +
+                         "\"email\":\"" + email + "\"," +
+                         "\"password\":\"" + password + "\"," +
+                         "\"firstname\":\"" + name + "\"," +
+                         "\"lastname\":\"" + surname + "\",";
+
+        jsonString = jsonString.TrimEnd(',');
+        jsonString += "}";
+
+        yield return PostAuthRequest("api/auth/local/register", jsonString);
+
+        if (isTeacher)
+        {
+            yield return ChangeUserRole(profesorRoleID, userID);
+        }
+    }
+
+    public IEnumerator ChangeUserRole(int roleID, string userID)
+    {
+        string endpoint = $"api/users/{userID}";
+
+        var jsonString = "{" + "\"role\":\"" + roleID + "\",";
+
+        jsonString = jsonString.TrimEnd(',');
+        jsonString += "}";
+
+        yield return PutRequest(endpoint, jsonString);
+    }
+    #endregion
+
+    #region LoginAndProfileFunctions
+    public void Login(string username, string password)
+    {
+        OnAuthStarted?.Invoke();
+        var jsonString = "{" +
+                         "\"identifier\":\"" + username + "\"," +
+                         "\"password\":\"" + password + "\"" +
+                         "}";
+
+        string endpoint = "api/auth/local";
+        StartCoroutine(PostAuthRequest(endpoint, jsonString));
+    }
+
+    public virtual void EditProfile(string username = "", string email = "", string password = "", string name = "", string surname = "")
+    {
+        OnAuthStarted?.Invoke();
+        string jsonString = "{";
+        if (username != "" && username != AuthenticatedUser.username)
+        {
+            jsonString += "\"username\":\"" + username + "\",";
+        }
+
+        if (email != "" && email != AuthenticatedUser.email)
+        {
+            jsonString += "\"email\":\"" + email + "\",";
+        }
+
+        if (password != "" && password != AuthenticatedUser.password)
+        {
+            jsonString += "\"password\":\"" + password + "\",";
+        }
+
+        if (name != "" && name != AuthenticatedUser.firstname)
+        {
+            jsonString += "\"firstname\":\"" + name + "\",";
+        }
+
+        if (surname != "" && surname != AuthenticatedUser.lastname)
+        {
+            jsonString += "\"lastname\":\"" + surname + "\",";
+        }
+
+        jsonString = jsonString.TrimEnd(',');
+        jsonString += "}";
+
+        if (jsonString != "{}")
+        {
+            string id = AuthenticatedUser.id.ToString();
+            string endpoint = $"api/users/{id}";
+
+            StartCoroutine(PutRequest(endpoint, jsonString, () => StartCoroutine(GetUpdatedUserData(endpoint))));
+        }
+        else
+        {
+            Debug.Log("No changes submitted");
+            return;
+        }
+    }
+
+    #endregion
+
+    #region StrapiUserTeam_functions
+    public void CreateStrapiUserTeam(string groupName)
+    {
+        var jsonString = "{" +
+                        "\"teamname\":\"" + groupName + "\"," +
+                        "\"creator\":\"" + AuthenticatedUser.username + "\",";
+        jsonString = jsonString.TrimEnd(',');
+        jsonString += "}";
+
+        string endpoint = "api/teams";
+
+        PostGroupRequest(endpoint, jsonString);
+    }
+
+    public virtual void GetStrapiUserTeamsList()
+    {
+        string endpoint = "api/teams?populate=members";
+        GetStrapiUserTeamsFromServer(endpoint);
+    }
+
+    public void GetStrapiUserTeamData(int id)
+    {
+        string endpoint = $"api/teams/{id}?populate=members";
+        GetGroupDataRequest(endpoint);
+    }
+
+    public virtual void DeleteAccount()
+    {
+        OnAuthStarted?.Invoke();
+        string endpoint = "api/users/" + userID;
+        DeleteRequest(endpoint);
+    }
+    #endregion
+
+    #region StrapiUser_methods
+    public void GetListOfUsersFromServer()
+    {
+        StartCoroutine(GetListOfUsersFromServerCoroutine());
+    }
+
+    public IEnumerator GetListOfUsersFromServerCoroutine()
+    {
+        string endpoint = "api/users";
+        yield return StartCoroutine(GetUsersRequest(endpoint));
+    }
+
+    public void GetListOfTeamsFromServer()
+    {
+        StartCoroutine(GetListOfTeamsFromServerCoroutine());
+    }
+
+    public IEnumerator GetListOfTeamsFromServerCoroutine()
+    {
+        string endpoint = "api/teams";
+        yield return StartCoroutine(GetStrapiUserTeamsFromServer(endpoint));
+    }
+
+    #endregion
+    #endregion
+
     // This method is a success handler for an authentication request. It receives an
     // authenticated response, an object that contains a JWT and a StrapiUser structure
     // that contains relevant data about the strapi user in question
@@ -446,12 +354,242 @@ public class StrapiComponent : MonoBehaviour
         userJWT = authResponse.jwt;
         userID = authResponse.user.id.ToString();
         IsAuthenticated = true;
-        
+
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
         Debug.Log(userJWT);
     }
 
+    #region POST_request_functions
+    public IEnumerator PostAuthRequest(string endpoint, string jsonString)
+    {
+        AuthResponse response = null;
+
+        OnAuthStarted?.Invoke();
+        var request = RestClient.Post<AuthResponse>(BaseURL + endpoint, jsonString).Then(authResponse =>
+        {
+            response = authResponse;
+            OnAuthSuccess?.Invoke(authResponse);
+            Debug.Log(1);
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => response != null);
+    }
+
+    public virtual void PostGroupRequest(string endpoint, string jsonString)
+    {
+        string url = BaseURL + endpoint;
+        OnAuthStarted?.Invoke();
+        RestClient.Post<StrapiUserTeam>(url, jsonString).Then(response =>
+        {
+            strapiUserTeam = response;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+    #endregion
+
+    #region PUT_request_functions
+    public IEnumerator PutRequest(string endpoint, string jsonString, Action onSuccess = null, bool requieresAuth = true)
+    {
+        if (requieresAuth && !IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            yield break;
+        }
+
+        AuthResponse response = null;
+        string url = BaseURL + endpoint;
+
+        OnAuthStarted?.Invoke();
+
+        RestClient.Put<AuthResponse>(url, jsonString).Then(authResponse =>
+        {
+            response = authResponse;
+            onSuccess?.Invoke();
+            Debug.Log("PUT request succeeded!");
+        })
+        .Catch(err =>
+        {
+            // Handle error
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => response != null);
+    }
+    #endregion
+
+    #region GET_request_functions
+    public IEnumerator GetUpdatedUserData(string endpoint, bool IsAuthenticated = true)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            yield break;
+        }
+
+        StrapiUser response = null;
+        string url = BaseURL + endpoint;
+
+        OnAuthStarted?.Invoke();
+        RestClient.Get<StrapiUser>(url).Then(userResponse =>
+        {
+            AuthenticatedUser = userResponse;
+            response = userResponse;
+
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => response != null);
+    }
+
+    public IEnumerator GetUsersRequest(string endpoint)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            yield break;
+        }
+
+        StrapiUser[] response = null;
+        string url = BaseURL + endpoint;
+
+        OnAuthStarted?.Invoke();
+        RestClient.GetArray<StrapiUser>(url).Then(userResponse =>
+        {
+            users = userResponse;
+            response = userResponse;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => response != null);
+    }
+
+    public virtual int GetUserCount(string endpoint)
+    {
+        OnAuthStarted?.Invoke();
+        RestClient.Get<int>(BaseURL + endpoint).Then(response =>
+        {
+            //UserCountResponse userCountResponse = new UserCountResponse()
+            //{
+            //    count = response
+            //};
+            return 3;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+
+            return -2;
+        });
+
+        return -1;
+    }
+
+    public virtual void GetAuthRequest(string endpoint)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            return;
+        }
+
+        OnAuthStarted?.Invoke();
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
+        RestClient.Get<AuthResponse>(BaseURL + endpoint).Then(authResponse =>
+        {
+            OnAuthSuccess?.Invoke(authResponse);
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+
+    public IEnumerator GetStrapiUserTeamsFromServer(string endpoint)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            yield break;
+        }
+
+        StrapiUserTeamListResponse teamResponse = null;
+        string url = BaseURL + endpoint;
+        OnAuthStarted?.Invoke();
+        RestClient.Get<StrapiUserTeamListResponse>(url).Then(response =>
+        {
+            teams = response.data;
+            teamResponse = response;
+            Debug.Log("Teams received successfully");
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => teamResponse != null);
+    }
+
+    public virtual void GetGroupDataRequest(string endpoint)
+    {
+        string url = BaseURL + endpoint;
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            return;
+        }
+
+        OnAuthStarted?.Invoke();
+        RestClient.Get<StrapiUserTeam>(url).Then(response =>
+        {
+            strapiUserTeam = response;
+            Debug.Log("Group data response successful");
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+    }
+    #endregion
+
+    #region DELETE_request_functions
+    public virtual void DeleteRequest(string endpoint)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            return;
+        }
+
+        RestClient.Delete(BaseURL + endpoint).Then(response =>
+        {
+            Debug.Log($"Successfully deleted data at {endpoint}");
+        })
+        .Catch(err =>
+        {
+            Debug.LogError($"Error deleting data at {endpoint}: {err}");
+        });
+
+        //RestClient.Delete(BaseURL + endpoint);
+        //userID = "";
+    }
+    #endregion
+
+    #region Getter_functions
     public String GetUsername()
     {
         return AuthenticatedUser.username;
@@ -469,21 +607,29 @@ public class StrapiComponent : MonoBehaviour
 
     public String GetName()
     {
-        return AuthenticatedUser.Firstname;
+        return AuthenticatedUser.firstname;
     }
 
     public String GetSurname()
     {
-        return AuthenticatedUser.Lastname;
+        return AuthenticatedUser.lastname;
     }
 
-    public StrapiUser[] getUsers()
+    public StrapiUser[] GetUsers()
     {
         return users;
     }
 
-    public StrapiGroup[] GetGroups()
+    public StrapiTeamsData[] GetTeams()
     {
-        return groups;
+        return teams;
     }
+
+    public StrapiUserTeam GetGroup(int id)
+    {
+        GetStrapiUserTeamData(id);
+
+        return strapiUserTeam;
+    }
+    #endregion
 }

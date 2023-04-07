@@ -23,6 +23,8 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     public InputField nameInput;
     public InputField surnameInput;
 
+    public Toggle userRole;
+
     public StrapiComponent strapiComponent;
 
     // Start is called before the first frame update
@@ -63,6 +65,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
         RegisterToggleButton.gameObject.SetActive(true);
         nameInput.transform.parent.gameObject.SetActive(false);
         surnameInput.transform.parent.gameObject.SetActive(false);
+        userRole.transform.parent.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
 
         HeaderText.text = "Login";
@@ -76,6 +79,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
         EmailInput.transform.parent.gameObject.SetActive(true);
         nameInput.transform.parent.gameObject.SetActive(true);
         surnameInput.transform.parent.gameObject.SetActive(true);
+        userRole.transform.parent.gameObject.SetActive(true);
         RegisterToggleButton.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(true);
 
@@ -96,7 +100,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     public void OnRegisterSubmit() {
-        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text);
+        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, userRole.isOn);
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {

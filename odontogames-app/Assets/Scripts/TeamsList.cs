@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -6,35 +7,46 @@ using StrapiForUnity;
 
 public class TeamsList : MonoBehaviour
 {
-    public GameObject userPrefab;
+    public GameObject groupPrefab;
+    public GameObject viewport;
 
-    private StrapiGroup[] groups = null;
+    private StrapiTeamsData[] teams = null;
+    private GameObject[] teamID = null;
+
+    public event Action OnStarted = delegate { };
 
     void Start()
     {
-        groups = new StrapiGroup[40];
+        OnStarted += BuildUserScreen;
 
-        //StrapiComponent._instance.GetGroupsRequest("api/users-permissions/roles");
-        //StartCoroutine(waiter());
+        StartCoroutine(GetTeamsCoroutine());
+    }
 
-        groups = StrapiComponent._instance.GetGroups();
-        Debug.Log(groups);
+    public void BuildUserScreen()
+    {
+        teams = StrapiComponent._instance.GetTeams();
+        Debug.Log(teams.Length);
+        teamID = new GameObject[teams.Length];
 
-        for (int i = 2; i < groups.Length; i++)
+        for (int i = 0; i < teams.Length; i++)
         {
-            GameObject group = Instantiate(userPrefab, new Vector3(this.transform.position.x, this.transform.position.y - 40 * i, this.transform.position.z), this.transform.rotation, this.transform);
-            group.transform.GetChild(0).GetComponent<Text>().text = groups[i].name;
-            group.transform.GetChild(1).GetComponent<Text>().text = groups[i].nb_users.ToString();
+            StrapiUserTeam team = teams[i].attributes;
+            GameObject teamData = Instantiate(groupPrefab, new Vector3(0, viewport.transform.position.y - 50 * i, 0), Quaternion.identity, viewport.transform);
+            teamData.transform.GetChild(0).GetComponent<Text>().text = team.teamname;
+            teamData.transform.GetChild(1).GetComponent<Text>().text = team.numplayers.ToString();
+
+            teamID[i] = teamData;
         }
+    }
+
+    private IEnumerator GetTeamsCoroutine()
+    {
+        yield return StartCoroutine(StrapiComponent._instance.GetListOfTeamsFromServerCoroutine());
+        OnStarted?.Invoke();
     }
 
     public void OnBackPressed()
     {
         MySceneManager.instance.LoadScene("MainMenu");
-    }
-
-    IEnumerator waiter()
-    {
-        yield return new WaitForSecondsRealtime(5);
     }
 }

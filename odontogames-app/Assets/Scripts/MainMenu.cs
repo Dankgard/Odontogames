@@ -48,12 +48,11 @@ public class MainMenu : MonoBehaviour
 
     public void OnTeamsListMenu()
     {
-        MySceneManager.instance.LoadScene("TeamsLists");
+        SceneHandler.instance.LoadScene("GroupUserList");
     }
 
     public void OnPlayLevelMenu()
     {
-        //SceneHandler.instance.LoadScene("CreateNewGroup");
-        MySceneManager.instance.LoadScene("PlayLevelMenu");
+        SceneHandler.instance.LoadScene("PlayLevelMenu");
     }
 }

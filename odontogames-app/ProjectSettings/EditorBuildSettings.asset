@@ -21,9 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/CreateNewGroup.unity
     guid: 31116ad5fca1a87478216d5b03fd61c5
   - enabled: 1
-    path: Assets/Scenes/TeamsLists.unity
-    guid: b83a15bfba0f4484198f850e77270ae7
-  - enabled: 1
     path: Assets/Scenes/escaperoom1_1.unity
     guid: 2a0d935691f66c04aabbe3732986efe6
   - enabled: 1

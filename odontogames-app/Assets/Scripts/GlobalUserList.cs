@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,27 +8,18 @@ using UnityEngine.UI;
 public class GlobalUserList : MonoBehaviour
 {
     public GameObject userPrefab;
+    public GameObject viewport;
 
     private StrapiUser[] users = null;
-    private GameObject[] userID;
+    private GameObject[] userID = null;
+
+    public event Action OnStarted = delegate { };
 
     void Start()
     {
-        users = new StrapiUser[40];
-        userID = new GameObject[40];
+        OnStarted += BuildUserScreen;
 
-        //StrapiComponent._instance.GetUsersRequest("api/users");
-        //StartCoroutine(waiter());
-
-        users = StrapiComponent._instance.getUsers();
-
-        for (int i = 0; i < users.Length; i++)
-        {
-            GameObject user = Instantiate(userPrefab, new Vector3(this.transform.position.x, this.transform.position.y - 40 * i, this.transform.position.z), this.transform.rotation, this.transform);
-            user.transform.GetChild(0).GetComponent<Text>().text = users[i].username;
-            user.transform.GetChild(1).GetComponent<Text>().text = users[i].Firstname;
-            userID[i] = user;
-        }
+        StartCoroutine(GetUsersCoroutine());
     }
 
     public StrapiUser[] GetSelectedUsers()
@@ -52,7 +44,28 @@ public class GlobalUserList : MonoBehaviour
         //    }
         //}
 
-        return users;
+        return null;
+    }
+
+    public void BuildUserScreen()
+    {
+        users = StrapiComponent._instance.GetUsers();
+        Debug.Log(users.Length);
+        userID = new GameObject[users.Length];
+
+        for (int i = 0; i < users.Length; i++)
+        {
+            GameObject user = Instantiate(userPrefab, new Vector3(0, viewport.transform.position.y - 50 * i, 0), Quaternion.identity, viewport.transform);
+            user.transform.GetChild(0).GetComponent<Text>().text = users[i].username;
+            user.transform.GetChild(1).GetComponent<Text>().text = users[i].firstname;
+
+            //Vector3 newPos = user.transform.position;
+            //newPos.x = 0;
+            //user.transform.position = newPos;
+            //Debug.Log("User " + i + ": " + user.transform.position);
+
+            userID[i] = user;
+        }
     }
 
     public void OnBackPressed()
@@ -60,8 +73,9 @@ public class GlobalUserList : MonoBehaviour
         MySceneManager.instance.LoadScene("MainMenu");
     }
 
-    IEnumerator waiter()
+    private IEnumerator GetUsersCoroutine()
     {
-        yield return new WaitForSecondsRealtime(5);
+        yield return StartCoroutine(StrapiComponent._instance.GetListOfUsersFromServerCoroutine());
+        OnStarted?.Invoke();
     }
 }
