@@ -21,35 +21,35 @@ public class CreateNewGroup : MonoBehaviour {
     private StrapiUser[] selectedUsers;
 
     // Start is called before the first frame update
-    void Start() {
-        groupCreationInterface.SetActive(false);
-        headerText.text = "";
-    }
+    //void Start() {
+    //    groupCreationInterface.SetActive(false);
+    //    headerText.text = "";
+    //}
 
-    public void OnSelectMembersPressed()
-    {
-        groupCreationInterface.SetActive(true);
-        usersSelectionInterface.SetActive(false);
-        selectedUsers = new StrapiUser[40];
-        selectedUsers = userList.GetSelectedUsers();
-    }
+    //public void OnSelectMembersPressed()
+    //{
+    //    groupCreationInterface.SetActive(true);
+    //    usersSelectionInterface.SetActive(false);
+    //    selectedUsers = new StrapiUser[40];
+    //    selectedUsers = userList.GetSelectedUsers();
+    //}
 
-    public void OnSubmitPressed() {
-        headerText.text = "Grupo " + groupNameInput.text + " creado.";
-        groupCreationInterface.SetActive(false);
-        usersSelectionInterface.SetActive(true);
+    //public void OnSubmitPressed() {
+    //    headerText.text = "Grupo " + groupNameInput.text + " creado.";
+    //    groupCreationInterface.SetActive(false);
+    //    usersSelectionInterface.SetActive(true);
 
-        // Aqui "se crea" el grupo
-        StrapiComponent._instance.CreateRole(groupNameInput.text);
+    //    // Aqui "se crea" el grupo
+    //    StrapiComponent._instance.CreateRole(groupNameInput.text);
 
-        for (int i = 0; i < selectedUsers.Length; i++)
-        {
-            // aqui
-            StrapiComponent._instance.SetUserGroup(groupNameInput.text, selectedUsers[i]);
-        }
-    }
+    //    for (int i = 0; i < selectedUsers.Length; i++)
+    //    {
+    //        // aqui
+    //        StrapiComponent._instance.SetUserGroup(groupNameInput.text, selectedUsers[i]);
+    //    }
+    //}
 
-    public void OnBackPressed() {
-        SceneHandler.instance.LoadScene("MainMenu");
-    }
+    //public void OnBackPressed() {
+    //    SceneHandler.instance.LoadScene("MainMenu");
+    //}
 }

@@ -11,8 +11,8 @@ using UnityEngine;
         public string password;
         public string provider;
         public bool confirmed;
-        public string Firstname;
-        public string Lastname;
+        public string firstname;
+        public string lastname;
         public string group;
 
         [SerializeField]
@@ -36,5 +36,11 @@ using UnityEngine;
             }
             return _updatedAt;
         }
+    }
+
+    [Serializable]
+    public class UserResponse
+    {
+        public StrapiUser[] users;
     }
 }
