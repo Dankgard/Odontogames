@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MinigameEnd.unity
     guid: ccde8cda972afbe49ad57d1af684ac55
+  - enabled: 1
+    path: Assets/Scenes/GroupUserList.unity
+    guid: 88d39f47e11334f48917e0fc902f61ba
   m_configObjects: {}
