@@ -93,7 +93,7 @@ public class GlobalUserList : MonoBehaviour
 
     private IEnumerator GetUsersCoroutine()
     {
-        yield return StartCoroutine(StrapiComponent._instance.GetListOfUsersFromServerCoroutine());
+        yield return StartCoroutine(StrapiComponent._instance.GetListOfUsersFromServerCoroutine("api/users"));
         OnStarted?.Invoke();
     }
 }

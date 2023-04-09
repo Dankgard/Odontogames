@@ -55,8 +55,14 @@ namespace StrapiForUnity
     [System.Serializable]
     public class StrapiTeamsData
     {
-        public int id;
+        public string id;
         public StrapiUserTeam attributes;
+    }
+
+    [Serializable]
+    public class StrapiUserTeamResponse
+    {
+        public StrapiTeamsData data;
     }
 
     [Serializable]
