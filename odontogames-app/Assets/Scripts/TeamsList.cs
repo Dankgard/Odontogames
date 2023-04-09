@@ -17,6 +17,8 @@ public class TeamsList : MonoBehaviour
     public GameObject newTeamPanelOne;
     public GameObject newTeamPanelTwo;
 
+    public GameObject deleteGroupsButton;
+
     public GameObject usersViewport;
 
     private StrapiTeamsData[] teams = null;
@@ -37,6 +39,23 @@ public class TeamsList : MonoBehaviour
         StartCoroutine(GetTeamsCoroutine());
     }
 
+    private void Update()
+    {
+        if (teamID != null)
+            if (!deleteGroupsButton.activeSelf)
+            {
+                for (int i = 0; i < teamID.Length; i++)
+                {
+                    if (teamID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+                    {
+                        deleteGroupsButton.SetActive(true);
+                        return;
+                    }
+                }
+                deleteGroupsButton.SetActive(false);
+            }
+    }
+
     public void BuildUserScreen()
     {
         teams = StrapiComponent._instance.GetTeams();
@@ -54,6 +73,7 @@ public class TeamsList : MonoBehaviour
             teamID[i] = teamData;
         }
 
+        teamPanel.SetActive(false);
         newTeamPanelOne.SetActive(false);
         newTeamPanelTwo.SetActive(false);
     }
@@ -86,13 +106,44 @@ public class TeamsList : MonoBehaviour
 
     public void OnClosePressed()
     {
-        teamPanel.SetActive(false);
+        if (teamPanel.activeSelf)
+        {
+            teamPanel.SetActive(false);
+        }
+        if (newTeamPanelOne.activeSelf)
+        {
+            newTeamPanelOne.SetActive(false);
+        }
+        if (newTeamPanelTwo.activeSelf)
+        {
+            newTeamPanelTwo.SetActive(false);
+        }
     }
 
     public void OnNewTeamPressed()
     {
         newTeamPanelOne.SetActive(true);
         newTeamPanelOne.transform.GetChild(4).gameObject.SetActive(false);
+    }
+
+    public void OnDeletePressed()
+    {
+        Button button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        int id = System.Array.IndexOf(teamID, button.gameObject);
+        StrapiComponent._instance.DeleteGroup(int.Parse(teams[id].id));
+        MySceneManager.instance.LoadScene("MainMenu");
+    }
+    public void OnDeleteMultiplePressed()
+    {
+        for (int i = 0; i < teamID.Length; i++)
+        {
+            if (teamID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+            {
+                int id = System.Array.IndexOf(teamID, teamID[i]);
+                StrapiComponent._instance.DeleteGroup(int.Parse(teams[id].id));
+            }
+        }
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 
     public void OnNextPressed()
@@ -117,8 +168,7 @@ public class TeamsList : MonoBehaviour
         else
         {
             newTeamPanelOne.transform.GetChild(4).gameObject.SetActive(true);
-        }
-        
+        }        
     }
 
     public void OnSubmitTeamPressed()
