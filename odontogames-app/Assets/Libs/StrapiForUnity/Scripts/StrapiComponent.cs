@@ -8,16 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class UserData
-{
-    public string username;
-    public string email;
-    public string password;
-    public string Firstname;
-    public string Lastname;
-}
-
 public class StrapiComponent : MonoBehaviour
 {
     // this event acctivates when the authentication petition is successful
@@ -36,9 +26,7 @@ public class StrapiComponent : MonoBehaviour
 
     // This event is activated when no JWT is found to be stored in the app
     // This var is a list of delegated methods that execute on success
-    public event Action NoStoredJWT = delegate { };
-
-    public event Action deleteAccount = delegate { };
+    private event Action NoStoredJWT = delegate { };
 
     [Tooltip("The root URL of your Strapi server. For example: http://localhost:1337")]
     public string BaseURL;
@@ -291,9 +279,18 @@ public class StrapiComponent : MonoBehaviour
     }
     public IEnumerator CreateStrapiUserTeamCoroutine(string groupName, List<int> members)
     {
+        int score = 0;
+        for (int i = 0; i < members.Count; i++)
+        {
+            int id = members[i];
+            score += users[id].score;
+        }
+
         var teamObject = new JObject(
             new JProperty("teamname", groupName),
             new JProperty("creator", AuthenticatedUser.username),
+            new JProperty("numplayers", new JValue(members.Count)),
+            new JProperty("score", new JValue(score)),
             new JProperty("members", JArray.FromObject(members)));
 
         string jsonString = JsonConvert.SerializeObject(new { data = teamObject });
@@ -319,32 +316,24 @@ public class StrapiComponent : MonoBehaviour
         }
     }
 
-    public virtual void GetStrapiUserTeamsList()
+    public void GetStrapiUserTeamsList()
     {
         string endpoint = "api/teams?populate=members";
-        GetStrapiUserTeamsFromServer(endpoint);
+        StartCoroutine(GetStrapiUserTeamsFromServer(endpoint));
     }
 
-    public void GetStrapiUserTeamData(int id)
+    public IEnumerator GetStrapiUserTeamData(int id)
     {
         string endpoint = $"api/teams/{id}?populate=members";
-        GetGroupDataRequest(endpoint);
+        Debug.Log(endpoint);
+        yield return GetGroupDataRequest(endpoint);
     }
-
-    #region Delete_functions
-    public virtual void DeleteAccount()
+    public IEnumerator GetStrapiUserFreePlayers(int id)
     {
-        OnAuthStarted?.Invoke();
-        string endpoint = $"api/teams/{userID}";
-        DeleteRequest(endpoint);
+        string endpoint = $"api/users";
+        Debug.Log(endpoint);
+        yield return GetUsersRequest(endpoint);
     }
-    public virtual void DeleteGroup(int id)
-    {
-        OnAuthStarted?.Invoke();
-        string endpoint = $"api/teams/{id}";
-        DeleteRequest(endpoint);
-    }
-    #endregion
     #endregion
 
     #region StrapiUser_methods
@@ -370,6 +359,29 @@ public class StrapiComponent : MonoBehaviour
     }
 
     #endregion
+
+    #region Delete_functions
+    public virtual void DeleteAccount()
+    {
+        OnAuthStarted?.Invoke();
+        string endpoint = $"api/users/{AuthenticatedUser.id}";
+        StartCoroutine(DeleteRequest(endpoint));
+    }
+    public virtual void DeleteUserAccount(int id)
+    {
+        OnAuthStarted?.Invoke();
+        string endpoint = $"api/users/{id}";
+        StartCoroutine(DeleteRequest(endpoint));
+    }
+
+    public void DeleteGroup(int id)
+    {
+        OnAuthStarted?.Invoke();
+        string endpoint = $"api/teams/{id}";
+        Debug.Log("Deleting " + endpoint);
+        StartCoroutine(DeleteRequest(endpoint));
+    }
+    #endregion
     #endregion
 
     // This method is a success handler for an authentication request. It receives an
@@ -379,7 +391,7 @@ public class StrapiComponent : MonoBehaviour
     // and the id in the userID var
     // finally, we set the default request headers property Authorization with the
     // authorization type Bearer and the user's JWT
-    public void OnAuthSuccessHandler(AuthResponse authResponse)
+    private void OnAuthSuccessHandler(AuthResponse authResponse)
     {
         AuthenticatedUser = authResponse.user;
         userJWT = authResponse.jwt;
@@ -392,7 +404,7 @@ public class StrapiComponent : MonoBehaviour
     }
 
     #region POST_request_functions
-    public IEnumerator PostAuthRequest(string endpoint, string jsonString)
+    private IEnumerator PostAuthRequest(string endpoint, string jsonString)
     {
         AuthResponse response = null;
 
@@ -410,7 +422,7 @@ public class StrapiComponent : MonoBehaviour
         yield return new WaitUntil(() => response != null);
     }
 
-    public IEnumerator PostGroupRequest(string endpoint, string jsonString)
+    private IEnumerator PostGroupRequest(string endpoint, string jsonString)
     {
         strapiUserTeam = null;
         string url = BaseURL + endpoint;
@@ -432,7 +444,7 @@ public class StrapiComponent : MonoBehaviour
     #endregion
 
     #region PUT_request_functions
-    public IEnumerator PutRequest(string endpoint, string jsonString, Action onSuccess = null, bool requieresAuth = true)
+    private IEnumerator PutRequest(string endpoint, string jsonString, Action onSuccess = null, bool requieresAuth = true)
     {
         if (requieresAuth && !IsAuthenticated)
         {
@@ -462,7 +474,7 @@ public class StrapiComponent : MonoBehaviour
     #endregion
 
     #region GET_request_functions
-    public IEnumerator GetUpdatedUserData(string endpoint, bool IsAuthenticated = true)
+    private IEnumerator GetUpdatedUserData(string endpoint, bool IsAuthenticated = true)
     {
         if (!IsAuthenticated)
         {
@@ -470,25 +482,24 @@ public class StrapiComponent : MonoBehaviour
             yield break;
         }
 
-        StrapiUser response = null;
+        AuthenticatedUser = null;
         string url = BaseURL + endpoint;
 
         OnAuthStarted?.Invoke();
         RestClient.Get<StrapiUser>(url).Then(userResponse =>
         {
             AuthenticatedUser = userResponse;
-            response = userResponse;
-
+            Debug.Log("User updated");
         }).Catch(err =>
         {
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
         });
 
-        yield return new WaitUntil(() => response != null);
+        yield return new WaitUntil(() => AuthenticatedUser != null);
     }
 
-    public IEnumerator GetUsersRequest(string endpoint)
+    private IEnumerator GetUsersRequest(string endpoint)
     {
         if (!IsAuthenticated)
         {
@@ -496,14 +507,37 @@ public class StrapiComponent : MonoBehaviour
             yield break;
         }
 
-        StrapiUser[] response = null;
+        users = null;
         string url = BaseURL + endpoint;
 
         OnAuthStarted?.Invoke();
         RestClient.GetArray<StrapiUser>(url).Then(userResponse =>
         {
             users = userResponse;
-            response = userResponse;
+        }).Catch(err =>
+        {
+            OnAuthFail?.Invoke(err);
+            Debug.Log($"Authentication Error: {err}");
+        });
+
+        yield return new WaitUntil(() => users != null);
+    }
+
+    private IEnumerator GetAuthRequest(string endpoint)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.LogWarning("User is not authenticated.");
+            yield break;
+        }
+
+        AuthResponse response = null;
+        OnAuthStarted?.Invoke();
+        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
+        RestClient.Get<AuthResponse>(BaseURL + endpoint).Then(authResponse =>
+        {
+            response = authResponse;
+            OnAuthSuccess?.Invoke(authResponse);
         }).Catch(err =>
         {
             OnAuthFail?.Invoke(err);
@@ -513,48 +547,7 @@ public class StrapiComponent : MonoBehaviour
         yield return new WaitUntil(() => response != null);
     }
 
-    public virtual int GetUserCount(string endpoint)
-    {
-        OnAuthStarted?.Invoke();
-        RestClient.Get<int>(BaseURL + endpoint).Then(response =>
-        {
-            //UserCountResponse userCountResponse = new UserCountResponse()
-            //{
-            //    count = response
-            //};
-            return 3;
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-
-            return -2;
-        });
-
-        return -1;
-    }
-
-    public virtual void GetAuthRequest(string endpoint)
-    {
-        if (!IsAuthenticated)
-        {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        OnAuthStarted?.Invoke();
-        RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
-        RestClient.Get<AuthResponse>(BaseURL + endpoint).Then(authResponse =>
-        {
-            OnAuthSuccess?.Invoke(authResponse);
-        }).Catch(err =>
-        {
-            OnAuthFail?.Invoke(err);
-            Debug.Log($"Authentication Error: {err}");
-        });
-    }
-
-    public IEnumerator GetStrapiUserTeamsFromServer(string endpoint)
+    private IEnumerator GetStrapiUserTeamsFromServer(string endpoint)
     {
         if (!IsAuthenticated)
         {
@@ -562,13 +555,12 @@ public class StrapiComponent : MonoBehaviour
             yield break;
         }
 
-        StrapiUserTeamListResponse teamResponse = null;
+        teams = null;
         string url = BaseURL + endpoint;
         OnAuthStarted?.Invoke();
         RestClient.Get<StrapiUserTeamListResponse>(url).Then(response =>
         {
             teams = response.data;
-            teamResponse = response;
             Debug.Log("Teams received successfully");
         }).Catch(err =>
         {
@@ -576,51 +568,47 @@ public class StrapiComponent : MonoBehaviour
             Debug.Log($"Authentication Error: {err}");
         });
 
-        yield return new WaitUntil(() => teamResponse != null);
+        yield return new WaitUntil(() => teams != null);
     }
 
-    public virtual void GetGroupDataRequest(string endpoint)
+    private IEnumerator GetGroupDataRequest(string endpoint)
     {
+        strapiUserTeam = null;
         string url = BaseURL + endpoint;
-        if (!IsAuthenticated)
-        {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
 
+        strapiUserTeam = null;
         OnAuthStarted?.Invoke();
-        RestClient.Get<StrapiUserTeam>(url).Then(response =>
+        RestClient.Get<StrapiUserTeamResponse>(url).Then(response =>
         {
-            strapiUserTeam = response;
+            strapiUserTeam = response.data.attributes;
             Debug.Log("Group data response successful");
         }).Catch(err =>
         {
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
         });
+
+        yield return new WaitUntil(() => strapiUserTeam != null);
     }
     #endregion
 
     #region DELETE_request_functions
-    public virtual void DeleteRequest(string endpoint)
+    private IEnumerator DeleteRequest(string endpoint)
     {
-        if (!IsAuthenticated)
+        string url = BaseURL + endpoint;
+        Debug.Log(url);
+        RestClient.Delete(BaseURL + endpoint).Then(deleteResponse =>
         {
-            Debug.LogWarning("User is not authenticated.");
-            return;
-        }
-
-        RestClient.Delete(BaseURL + endpoint).Then(response =>
-        {
+            Debug.Log("dweqeqwwe");
             Debug.Log($"Successfully deleted data at {endpoint}");
         })
         .Catch(err =>
         {
+            Debug.Log("EROROREWORW");
             Debug.LogError($"Error deleting data at {endpoint}: {err}");
         });
 
-        //RestClient.Delete(BaseURL + endpoint);
-        //userID = "";
+        yield return 0;
     }
     #endregion
 
@@ -660,10 +648,8 @@ public class StrapiComponent : MonoBehaviour
         return teams;
     }
 
-    public StrapiUserTeam GetGroup(int id)
+    public StrapiUserTeam GetGroup()
     {
-        GetStrapiUserTeamData(id);
-
         return strapiUserTeam;
     }
     #endregion

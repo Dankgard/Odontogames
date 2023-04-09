@@ -12,6 +12,7 @@ public class GlobalUserList : MonoBehaviour
     public GameObject viewport;
 
     public GameObject userPanel;
+    public GameObject deleteUsersButton;
 
     private StrapiUser[] users = null;
     private GameObject[] userID = null;
@@ -25,29 +26,21 @@ public class GlobalUserList : MonoBehaviour
         StartCoroutine(GetUsersCoroutine());
     }
 
-    public StrapiUser[] GetSelectedUsers()
+    private void Update()
     {
-        int count = 0;
-        //for (int i = 0; i < userID.Length; i++)
-        //{
-        //    if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
-        //        count++;
-        //}
-
-        //Debug.Log(count);
-
-        //StrapiUser[] selectedUsers = new StrapiUser[count];
-        //int index = 0;
-        //for (int i = 0; i < userID.Length; i++)
-        //{
-        //    if (userID[i].transform.GetChild(2) != null)
-        //    {
-        //        selectedUsers[index] = users[i];
-        //        index++;
-        //    }
-        //}
-
-        return null;
+        if (userID != null)
+            if (!deleteUsersButton.activeSelf)
+            {
+                for (int i = 0; i < userID.Length; i++)
+                {
+                    if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+                    {
+                        deleteUsersButton.SetActive(true);
+                        return;
+                    }
+                }
+                deleteUsersButton.SetActive(false);
+            }
     }
 
     public void BuildUserScreen()
@@ -83,11 +76,32 @@ public class GlobalUserList : MonoBehaviour
 
     public void OnBackPressed()
     {
-        userPanel.SetActive(false);
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 
     public void OnClosePressed()
     {
+        userPanel.SetActive(false);
+    }
+    public void OnDeletePressed()
+    {
+
+        Button button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        int id = System.Array.IndexOf(userID, button.gameObject);
+        StrapiComponent._instance.DeleteUserAccount(users[id].id);
+        MySceneManager.instance.LoadScene("MainMenu");
+    }
+
+    public void OnDeleteMultiplePressed()
+    {
+        for (int i = 0; i < userID.Length; i++)
+        {
+            if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+            {
+                int id = System.Array.IndexOf(userID, userID[i]);
+                StrapiComponent._instance.DeleteUserAccount(users[id].id);
+            }
+        }
         MySceneManager.instance.LoadScene("MainMenu");
     }
 

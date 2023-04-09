@@ -4,16 +4,16 @@ using UnityEngine;
 namespace StrapiForUnity
 {
     [System.Serializable]
-    public class StrapiTeamMember
+    public class StrapiMember
     {
         public int id;
         public StrapiUser attributes;
     }
 
     [System.Serializable]
-    public class StrapiTeamMembersData
+    public class StrapiTeamMember
     {
-        public StrapiUserTeam[] data;
+        public StrapiMember[] data;
     }
 
     [System.Serializable]
@@ -49,7 +49,7 @@ namespace StrapiForUnity
             return _updatedAt;
         }
 
-        public StrapiTeamMembersData members;
+        public StrapiTeamMember members;
     }
 
     [System.Serializable]
