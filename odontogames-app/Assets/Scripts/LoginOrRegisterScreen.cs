@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class LoginOrRegisterScreen : MonoBehaviour {
     public Text HeaderText;
+    public Text ErrorText;
     public VerticalLayoutGroup ContainerLayout;
 
     // Elementos para iniciar sesion
@@ -22,6 +23,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     public InputField EmailInput;
     public InputField nameInput;
     public InputField surnameInput;
+    public InputField specialPasswordInput;
 
     public Toggle userRole;
 
@@ -56,6 +58,15 @@ public class LoginOrRegisterScreen : MonoBehaviour {
                 RegisterSubmitButton.onClick.Invoke();
             }
         }
+
+        if (userRole.isOn)
+        {
+            specialPasswordInput.transform.parent.gameObject.SetActive(true);
+        }
+        else if (!userRole.isOn)
+        {
+            specialPasswordInput.transform.parent.gameObject.SetActive(false);
+        }
     }
 
     public void OnLoginToggle() {
@@ -67,6 +78,7 @@ public class LoginOrRegisterScreen : MonoBehaviour {
         surnameInput.transform.parent.gameObject.SetActive(false);
         userRole.transform.parent.gameObject.SetActive(false);
         LoginToggleButton.gameObject.SetActive(false);
+        specialPasswordInput.transform.parent.gameObject.SetActive(false);
 
         HeaderText.text = "Login";
 
@@ -96,11 +108,59 @@ public class LoginOrRegisterScreen : MonoBehaviour {
     }
 
     public void OnLoginSubmit() {
+        if (string.IsNullOrEmpty(UsernameInput.text))
+        {
+            HandleError("Identifier");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(PasswordInput.text))
+        {
+            HandleError("Password");
+            return;
+        }
+
         strapiComponent.Login(UsernameInput.text, PasswordInput.text);
     }
 
     public void OnRegisterSubmit() {
-        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, userRole.isOn);
+        if (string.IsNullOrEmpty(UsernameInput.text))
+        {
+            HandleError("Username");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(nameInput.text))
+        {
+            HandleError("Name");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(surnameInput.text))
+        {
+            HandleError("Surname");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(EmailInput.text))
+        {
+            HandleError("Email");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(PasswordInput.text))
+        {
+            HandleError("Password");
+            return;
+        }
+
+        if (userRole.isOn && string.IsNullOrEmpty(specialPasswordInput.text))
+        {
+            HandleError("Special password");
+            return;
+        }
+
+        strapiComponent.Register(UsernameInput.text, nameInput.text, surnameInput.text, EmailInput.text, PasswordInput.text, userRole.isOn, specialPasswordInput.text);
     }
 
     private void handleSuccessfulAuthentication(AuthResponse authUser) {
@@ -109,5 +169,11 @@ public class LoginOrRegisterScreen : MonoBehaviour {
 
     private void handleUnsuccessfulAuthentication(Exception error) {
         HeaderText.text = $"Authentication Error: {error.Message}";
+    }
+
+    private void HandleError(string missingInput)
+    {
+        ErrorText.transform.gameObject.SetActive(true);
+        ErrorText.text = $"Empty {missingInput} form";
     }
 }

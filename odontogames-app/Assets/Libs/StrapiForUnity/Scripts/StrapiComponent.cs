@@ -38,6 +38,8 @@ public class StrapiComponent : MonoBehaviour
     public bool IsAuthenticated = false;
     public string ErrorMessage;
 
+    public string TEACHER_SECRET_PASSWORD = "1234";
+
     private string userJWT = "";
     private string userID = "";
 
@@ -172,9 +174,14 @@ public class StrapiComponent : MonoBehaviour
     // AQUI EMPIEZAN LOS METODOS DE USUARIO
     #region USER_SERVER_FUNCTIONS
     #region RegisterFunctions
-    public void Register(string username, string name, string surname, string email, string password, bool isTeacher = false)
+    public void Register(string username, string name, string surname, string email, string password, bool isTeacher = false, string specialPassword = "")
     {
-        StartCoroutine(RegisterCoroutine(username, name, surname, email, password, isTeacher));
+        if (isTeacher)
+        {
+            if (specialPassword == TEACHER_SECRET_PASSWORD)
+                StartCoroutine(RegisterCoroutine(username, name, surname, email, password, isTeacher));
+            else Debug.Log("Wrong secret password");
+        }
     }
 
     public IEnumerator RegisterCoroutine(string username, string name, string surname, string email, string password, bool isTeacher)
@@ -224,42 +231,37 @@ public class StrapiComponent : MonoBehaviour
         StartCoroutine(PostAuthRequest(endpoint, jsonString));
     }
 
-    public virtual void EditProfile(string username = "", string email = "", string password = "", string name = "", string surname = "")
+    public virtual void EditProfile(string username, string email, string name, string surname)
     {
         OnAuthStarted?.Invoke();
-        string jsonString = "{";
-        if (username != "" && username != AuthenticatedUser.username)
+        JObject jsonObject = new JObject();
+
+        if (!string.IsNullOrEmpty(username) && username != AuthenticatedUser.username)
         {
-            jsonString += "\"username\":\"" + username + "\",";
+            jsonObject.Add("username", username);
         }
 
-        if (email != "" && email != AuthenticatedUser.email)
+        if (!string.IsNullOrEmpty(email) && email != AuthenticatedUser.email)
         {
-            jsonString += "\"email\":\"" + email + "\",";
+            jsonObject.Add("email", email);
         }
 
-        if (password != "" && password != AuthenticatedUser.password)
+        if (!string.IsNullOrEmpty(name) && name != AuthenticatedUser.firstname)
         {
-            jsonString += "\"password\":\"" + password + "\",";
+            jsonObject.Add("firstname", name);
         }
 
-        if (name != "" && name != AuthenticatedUser.firstname)
+        if (!string.IsNullOrEmpty(surname) && surname != AuthenticatedUser.lastname)
         {
-            jsonString += "\"firstname\":\"" + name + "\",";
+            jsonObject.Add("lastname", surname);
         }
 
-        if (surname != "" && surname != AuthenticatedUser.lastname)
-        {
-            jsonString += "\"lastname\":\"" + surname + "\",";
-        }
-
-        jsonString = jsonString.TrimEnd(',');
-        jsonString += "}";
-
-        if (jsonString != "{}")
+        if (jsonObject.Count > 0)
         {
             string id = AuthenticatedUser.id.ToString();
             string endpoint = $"api/users/{id}";
+
+            string jsonString = JsonConvert.SerializeObject(jsonObject);
 
             StartCoroutine(PutRequest(endpoint, jsonString, () => StartCoroutine(GetUpdatedUserData(endpoint))));
         }

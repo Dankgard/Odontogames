@@ -10,7 +10,6 @@ public class ProfileMenu : MonoBehaviour
 
     public InputField EditUsernameInput;
     public InputField EditEmailInput;
-    public InputField EditPasswordInput;
     public InputField EditNameInput;
     public InputField EditSurnameInput;
 
@@ -24,7 +23,6 @@ public class ProfileMenu : MonoBehaviour
 
         EditUsernameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditEmailInput.GetComponent<EditProfilePlaceholderText>().ShowText();
-        EditPasswordInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditNameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditSurnameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
     }
@@ -35,7 +33,6 @@ public class ProfileMenu : MonoBehaviour
         
         EditUsernameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditEmailInput.GetComponent<EditProfilePlaceholderText>().ShowText();
-        EditPasswordInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditNameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
         EditSurnameInput.GetComponent<EditProfilePlaceholderText>().ShowText();
     }
@@ -50,7 +47,7 @@ public class ProfileMenu : MonoBehaviour
 
     public void submitRequest()
     {
-        StrapiComponent._instance.EditProfile(EditUsernameInput.text, EditEmailInput.text, EditPasswordInput.text, EditNameInput.text, EditSurnameInput.text);
+        StrapiComponent._instance.EditProfile(EditUsernameInput.text, EditEmailInput.text, EditNameInput.text, EditSurnameInput.text);
 
         headerText.text = "Profile updated";
         editProfileMenu.SetActive(false);
