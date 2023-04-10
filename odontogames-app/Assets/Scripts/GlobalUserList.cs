@@ -29,18 +29,15 @@ public class GlobalUserList : MonoBehaviour
     private void Update()
     {
         if (userID != null)
-            if (!deleteUsersButton.activeSelf)
+            for (int i = 0; i < userID.Length; i++)
             {
-                for (int i = 0; i < userID.Length; i++)
+                if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
                 {
-                    if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
-                    {
-                        deleteUsersButton.SetActive(true);
-                        return;
-                    }
+                    deleteUsersButton.SetActive(true);
+                    return;
                 }
-                deleteUsersButton.SetActive(false);
             }
+        deleteUsersButton.SetActive(false);
     }
 
     public void BuildUserScreen()

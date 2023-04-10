@@ -35,7 +35,8 @@ public class TeamsList : MonoBehaviour
 
     private StrapiUser[] users = null;
     private GameObject[] userID = null;
-    private StrapiUser[] newTeamUsers = null;
+    private StrapiUserTeam team;
+    private List<StrapiUser> freeUsers = null;
 
     void Start()
     {
@@ -92,7 +93,6 @@ public class TeamsList : MonoBehaviour
     {
         Button button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         currentTeamIndex= teamID.IndexOf(button.gameObject);
-        Debug.Log("Current team: " + teams[currentTeamIndex].id);
 
         StrapiUserTeam team = teams[currentTeamIndex].attributes;
         teamPanel.transform.GetChild(0).GetComponent<Text>().text = "Team name: " + team.teamname;
@@ -132,10 +132,17 @@ public class TeamsList : MonoBehaviour
         if (editTeamPlayers.activeSelf)
         {
             editTeamPlayers.SetActive(false);
+
+            for (int i = 0; i < userID.Length; i++)
+                Destroy(userID[i]);
+            userID = null;
         }
         if (addTeamPlayers.activeSelf)
         {
             addTeamPlayers.SetActive(false);
+            for (int i = 0; i < userID.Length; i++)
+                Destroy(userID[i]);
+            userID = null;
         }
     }
 
@@ -144,10 +151,6 @@ public class TeamsList : MonoBehaviour
         yield return StartCoroutine(StrapiComponent._instance.GetStrapiUserTeamData(id));
     }
 
-    //private IEnumerator FreePlayersCoroutine()
-    //{
-    //    yield return StartCoroutine(StrapiComponent._instance.GetStrapiUserTeamData(id));
-    //}
     public void OnEditPlayersPressed()
     {
         StartCoroutine(OnEditPlayersPressedCoroutine());
@@ -158,45 +161,33 @@ public class TeamsList : MonoBehaviour
         teamPanel.SetActive(false);
 
         yield return StartCoroutine(TeamMembersCoroutine(int.Parse(teams[currentTeamIndex].id)));
-        Debug.Log("Players retrieved");
         OnPlayersRetrieved?.Invoke();
     }
 
     public void OnAddPlayersPressed()
     {
-        //StartCoroutine(OnAddPlayersPressedCoroutine());
         addTeamPlayers.SetActive(true);
         teamPanel.SetActive(false);
         BuildFreePlayerList();
     }
-    //private IEnumerator OnAddPlayersPressedCoroutine()
-    //{
-    //    addTeamPlayers.SetActive(true);
-    //    teamPanel.SetActive(false);
-
-    //    //yield return StartCoroutine(FreePlayersCoroutine());
-    //    Debug.Log("Players retrieved");
-    //    //OnPlayersRetrieved?.Invoke();
-    //}
 
     public void BuildTeamMembersList()
     {
-        StrapiUserTeam team = StrapiComponent._instance.GetGroup();
-
+        team = StrapiComponent._instance.GetGroup();
         userID = new GameObject[team.members.data.Length];
         for (int i = 0; i < team.members.data.Length; i++)
         {
             GameObject user = Instantiate(userPrefab, new Vector3(0, usersViewport.transform.position.y - 50 * i, 0), Quaternion.identity, usersViewport.transform);
             user.transform.GetChild(0).GetComponent<Text>().text = team.members.data[i].attributes.username;
             user.transform.GetChild(1).GetComponent<Text>().text = team.members.data[i].attributes.firstname;
-            user.transform.parent = editTeamPlayers.transform.GetChild(3).GetChild(0).GetChild(0);
+            user.transform.parent = editTeamPlayers.transform.GetChild(2).GetChild(0).GetChild(0);
             userID[i] = user;
         }
     }
 
     public void BuildFreePlayerList()
     {
-        List<StrapiUser> freeUsers = new List<StrapiUser>();
+        freeUsers = new List<StrapiUser>();
         users = StrapiComponent._instance.GetUsers();
 
         for (int i = 0; i < users.Length; i++)
@@ -218,25 +209,37 @@ public class TeamsList : MonoBehaviour
         }
     }
 
-    public void OnDeleteMemberPressed()
-    {
-        //Button button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-        //int id = System.Array.IndexOf(teamID, button.gameObject);
-        //StrapiComponent._instance.DeleteGroup(int.Parse(teams[id].id));
-        //MySceneManager.instance.LoadScene("MainMenu");
-    }
-
     public void OnDeleteMembersPressed()
     {
-        //for (int i = 0; i < teamID.Length; i++)
-        //{
-        //    if (teamID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
-        //    {
-        //        int id = System.Array.IndexOf(teamID, teamID[i]);
-        //        StrapiComponent._instance.DeleteGroup(int.Parse(teams[id].id));
-        //    }
-        //}
-        //MySceneManager.instance.LoadScene("MainMenu");
+        List<int> deletedPlayersId = new List<int>();
+        for (int i = 0; i < userID.Length; i++)
+        {
+            if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+            {
+                Debug.Log("elegido");
+                Debug.Log(team.members.data[i].id);
+                deletedPlayersId.Add(team.members.data[i].id);
+            }
+        }
+        int teamID = int.Parse(teams[currentTeamIndex].id);
+        Debug.Log("deletedPlayersId " + deletedPlayersId.Count);
+        StrapiComponent._instance.UpdateStrapiUserTeam(teamID, deletedPlayersId, false);
+        MySceneManager.instance.LoadScene("MainMenu");
+    }
+
+    public void OnAddMembersPressed()
+    {
+        List<int> addedPlayersID = new List<int>();
+        for (int i = 0; i < userID.Length; i++)
+        {
+            if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
+            {
+                addedPlayersID.Add(freeUsers[i].id);
+            }
+        }
+        int teamID = int.Parse(teams[currentTeamIndex].id);
+        StrapiComponent._instance.UpdateStrapiUserTeam(teamID, addedPlayersID, true);
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 
     public void OnNewTeamPressed()
@@ -294,6 +297,7 @@ public class TeamsList : MonoBehaviour
         {
             if (userID[i].transform.GetChild(2).GetComponent<Toggle>().isOn)
             {
+                Debug.Log(users[i].id);
                 playersID.Add(users[i].id);
             }
         }

@@ -123,7 +123,8 @@ public class LoginOrRegisterScreen : MonoBehaviour {
         strapiComponent.Login(UsernameInput.text, PasswordInput.text);
     }
 
-    public void OnRegisterSubmit() {
+    public void OnRegisterSubmit()
+    {
         if (string.IsNullOrEmpty(UsernameInput.text))
         {
             HandleError("Username");
