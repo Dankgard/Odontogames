@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayMusic : MonoBehaviour
 {
-    void Awake()
+    void Start()
     {
         SoundManager.instance.PlayMusic();
     }
