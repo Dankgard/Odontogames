@@ -25,7 +25,10 @@ public class escaperoom1_1_robot : MonoBehaviour
             CrossToOtherSide();
 
         if (transform.position == target.transform.position)
+        {
+            SoundManager.instance.PlaySound(2);
             MySceneManager.instance.LoadScene("MinigameEnd");
+        }
 
     }
 

@@ -133,6 +133,7 @@ public class escaperoom1_5_player : MonoBehaviour
         else
         {
             Debug.Log("Juego terminado");
+            SoundManager.instance.PlaySound(2);
             MySceneManager.instance.LoadScene("MinigameEnd");
         }
     }

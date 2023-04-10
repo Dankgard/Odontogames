@@ -55,7 +55,10 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
         answerInputField.text = "";
 
         if (index == questions.Length)
+        {
+            SoundManager.instance.PlaySound(2);
             MySceneManager.instance.LoadScene("MinigameEnd");
+        }
     }
 
     public bool checkAnswer(string answer, int index)

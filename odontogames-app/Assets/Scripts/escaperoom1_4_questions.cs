@@ -44,6 +44,7 @@ public class escaperoom1_4_questions : MonoBehaviour
         }
         else
         {
+            SoundManager.instance.PlaySound(2);
             MySceneManager.instance.LoadScene("MinigameEnd");
         }
     }
