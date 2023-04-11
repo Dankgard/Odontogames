@@ -381,6 +381,7 @@ public class StrapiComponent : MonoBehaviour
         }
         else
         {
+            Debug.Log(strapiUserTeam.members.data);
             for (int j = 0; j < strapiUserTeam.members.data.Length; j++)
             {
                 int id = strapiUserTeam.members.data[j].id;
@@ -479,8 +480,10 @@ public class StrapiComponent : MonoBehaviour
     {
         OnAuthStarted?.Invoke();
         string endpoint = $"api/teams/{id}";
-        Debug.Log("Deleting " + endpoint);
         StartCoroutine(DeleteRequest(endpoint));
+
+        // TODO
+        // Hacer que group de todos los usuarios sea None
     }
     #endregion
     #endregion
@@ -531,6 +534,7 @@ public class StrapiComponent : MonoBehaviour
         {
             strapiUserTeam = strapiResponse.data.attributes;
             strapiUserTeam.id = int.Parse(strapiResponse.data.id);
+            StartCoroutine(GetStrapiUserTeamData(strapiUserTeam.id));
         }).Catch(err =>
         {
             Debug.LogError(err);
