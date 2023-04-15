@@ -10,7 +10,6 @@ public class EscapeRoom1_1_AnswerBox : MonoBehaviour
     public GameObject platform;
     public int numImages;
 
-    private int images;
     private bool acceptingImages;
     private bool platformMoving;
 
@@ -46,7 +45,7 @@ public class EscapeRoom1_1_AnswerBox : MonoBehaviour
         {
             if (other.gameObject.tag == "image")
             {
-                platform.GetComponent<escaperoom1_1_platform>().UpdatePlatform();
+                platform.GetComponent<escaperoom1_1_platform>().UpdatePlatform(2);
                 platformMoving = true;
                 numImages--;
             }

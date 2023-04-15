@@ -8,14 +8,22 @@ public class escaperoom1_1_robot : MonoBehaviour
     public int requiredPlatforms;
     public GameObject target;
     public float moveSpeed;
+
+    public Animator animator;
+
     bool moving = false;
+
+    private void Start()
+    {
+        animator.enabled = false;
+    }
 
     public void AddCompletedPlatform()
     {
         completedPlatforms++;
         if(completedPlatforms == requiredPlatforms)
         {
-            moving = true;
+            StartMoving();
         }
     }
 
@@ -25,15 +33,37 @@ public class escaperoom1_1_robot : MonoBehaviour
             CrossToOtherSide();
 
         if (transform.position == target.transform.position)
-        {
-            SoundManager.instance.PlaySound(2);
-            MySceneManager.instance.LoadScene("MinigameEnd");
-        }
+            EndMinigameTransition();
 
     }
 
     void CrossToOtherSide()
     {
         transform.position = Vector3.MoveTowards(transform.position, target.transform.position, moveSpeed * Time.deltaTime);
+    }
+
+    void StartMoving()
+    {
+        StartCoroutine(StartMovingCoroutine());
+    }
+
+    private IEnumerator StartMovingCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+        moving = true;
+        CamerasManager.camerasManagerInstance.SwapCamera(2);
+    }
+
+    void EndMinigameTransition()
+    {
+        StartCoroutine(EndMinigameTransitionCoroutine());
+    }
+
+    private IEnumerator EndMinigameTransitionCoroutine()
+    {
+        CamerasManager.camerasManagerInstance.SwapCamera(3);
+        animator.enabled = true;
+        yield return new WaitForSeconds(1f);
+        MySceneManager.instance.LoadScene("MinigameEnd");
     }
 }

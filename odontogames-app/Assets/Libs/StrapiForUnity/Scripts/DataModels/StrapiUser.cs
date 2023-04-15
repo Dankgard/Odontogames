@@ -14,6 +14,7 @@ using UnityEngine;
         public string firstname;
         public string lastname;
         public string group;
+        public int score;
 
         [SerializeField]
         private string created_at;
@@ -36,6 +37,8 @@ using UnityEngine;
             }
             return _updatedAt;
         }
+
+        public StrapiUserTeam team;
     }
 
     [Serializable]

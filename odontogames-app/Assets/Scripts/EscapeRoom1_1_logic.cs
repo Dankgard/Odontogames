@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class EscapeRoom1_1_logic : MonoBehaviour
 {
     public GameObject panel; // El panel de la UI
-    public GameObject playerCharacter; // El jugador
     public GameObject prefab; // El prefab que se va a generar
 
     // un array de las plataformas que se tienen que llenar
@@ -25,13 +24,16 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     {
         numberOfPictures = textures.Length;
         CreateImagePrefab();
+        CamerasManager.camerasManagerInstance.SwapCamera(0);
+        picturesSpawned = numberOfPictures;
     }
 
     void Update()
     {
-        if (picturesSpawned >= numberOfPictures)
+        if (picturesSpawned <= 0)
         {
-            Debug.Log("Juego terminado. Bien hecho!");
+            //Debug.Log("Juego terminado. Bien hecho!");
+            //StrapiComponent._instance.UpdatePlayerScore(score);
         }
 
         for (int i = 0; i < platforms.Length; i++)
@@ -43,6 +45,10 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     public void CheckAnswer(string containerName)
     {
+        if (picturesSpawned > 1)
+        {
+            CamerasManager.camerasManagerInstance.SwapCamera(1);
+        }
         string imageType = currentImage.GetComponent<ShowImage>().GetTextureName();
         if (imageType == containerName) score++; else score--;
         Destroy(currentImage);
@@ -51,15 +57,14 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     void CreateImagePrefab()
     {
-        currentImage = Instantiate(prefab, transform.position, Quaternion.identity); // Crea una instancia del prefab en la posición especificada
+        currentImage = Instantiate(prefab, transform.GetChild(0).position, Quaternion.identity); // Crea una instancia del prefab en la posición especificada
         currentImage.GetComponent<ShowImage>().SetPanel(panel);
-        currentImage.GetComponent<ShowImage>().SetPlayerCharacter(playerCharacter);
 
         // ponemos la textura al panel
         Texture2D texture = null;
         PickRandomTexture(out texture);
         currentImage.GetComponent<ShowImage>().SetTexture(texture);
-        picturesSpawned++;
+        picturesSpawned--;
     }
 
     void PickRandomTexture(out Texture2D texture)

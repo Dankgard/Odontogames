@@ -8,67 +8,6 @@ public class ShowImage : MonoBehaviour
     private GameObject panel = null; // Referencia al objeto de panel que se mostrara u ocultara
     private string textureName;
 
-    // Para el texto de interaccion
-    public TextMesh interactText;
-    public float interactDistance = 3f;
-    private GameObject player = null;
-
-    private System.Action OnInteract;
-
-    private bool disableController;
-
-    public void Start()
-    {
-        OnInteract = ShowPanel;
-    }
-
-    private void Awake()
-    {
-        disableController = false;
-    }
-
-    private void Update()
-    {
-        if (IsPlayerNear())
-        {
-            UpdateInteractText(true);
-            TryInteract();
-        }
-        else
-        {
-            UpdateInteractText(false);
-        }
-    }
-
-    private void UpdateInteractText(bool show)
-    {
-        if (show)
-        {
-            interactText.text = "Pulsa 'G' para ver la imagen";
-        }
-        else
-        {
-            interactText.text = "";
-        }
-    }
-
-    private bool IsPlayerNear()
-    {
-        float distance = Vector3.Distance(transform.position, player.transform.position);
-        return distance <= interactDistance;
-    }
-
-    private void TryInteract()
-    {
-        if (IsPlayerNear() && Input.GetKeyDown("g"))
-        {
-            if (OnInteract != null)
-            {
-                OnInteract();
-            }
-        }
-    }
-
     public void SetPanel(GameObject panel)
     {
 
@@ -76,7 +15,6 @@ public class ShowImage : MonoBehaviour
         if (panel == null)
         {
             Debug.LogError("El objeto de panel no esta asignado en " + name);
-            enabled = false;
             return;
         }
 
@@ -84,20 +22,6 @@ public class ShowImage : MonoBehaviour
         this.panel = panel;
         // Asegurarse de que el objeto de panel este desactivado al inicio
         this.panel.SetActive(false);
-    }
-
-    public void SetPlayerCharacter(GameObject player)
-    {
-        // Asegurarse de que se haya asignado un objeto de panel
-        if (player == null)
-        {
-            Debug.LogError("El objeto de panel no esta asignado en " + name);
-            enabled = false;
-            return;
-        }
-
-
-        this.player = player;
     }
 
     public void SetTexture(Texture2D texturaPanel)
@@ -121,12 +45,6 @@ public class ShowImage : MonoBehaviour
     {
         // Cambiar el estado activo del objeto de panel en cada clic
         panel.SetActive(!panel.activeSelf);
-        disableController = !disableController;
-    }
-
-    public bool ControllerIsDisabled()
-    {
-        return disableController;
     }
 
     public string GetTextureName()
