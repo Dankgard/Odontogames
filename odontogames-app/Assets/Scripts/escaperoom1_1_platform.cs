@@ -13,7 +13,6 @@ public class escaperoom1_1_platform : MonoBehaviour
     private Vector3 currentPosition;
 
     private bool moving = false;
-    private bool working = true;
 
     void Start()
     {
@@ -28,17 +27,23 @@ public class escaperoom1_1_platform : MonoBehaviour
         }
     }
 
-    public void UpdatePlatform()
+    public void UpdatePlatform(float seconds)
     {
-        moving = true;
-        currentPosition.y -= displacementSize;
+        StartCoroutine(WaitSecondsCoroutine(seconds));
     }
 
     public void PlatformFinished()
     {
-        working = false;
         littlePlatform.SetActive(false);
         bigPlatform.SetActive(true);
         GameObject.FindGameObjectWithTag("robot").GetComponent<escaperoom1_1_robot>().AddCompletedPlatform();
+    }
+    private IEnumerator WaitSecondsCoroutine(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        moving = true;
+        currentPosition.y -= displacementSize;
+        yield return new WaitForSeconds(0.5f);
+        CamerasManager.camerasManagerInstance.SwapCamera(0);
     }
 }

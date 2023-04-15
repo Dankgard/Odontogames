@@ -1,96 +1,90 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Linq;
 
 public class escaperoom1_6 : MonoBehaviour
 {
-    public string answer;
-    public GameObject letterBoxPrefab;
+    public string prompt;
+    private string answer;
+
+    public int separationVal = 35;
     public GameObject boxPrefab;
 
     private string[] words;
-    private GameObject[,] boxes;
+    private List<GameObject> boxes;
 
-    private bool movingLetters;
+    public Material correctAnswer;
+    public Material wrongAnswer;
 
     void Start()
     {
-        movingLetters = false;
-        words = answer.Split(' ');
+        answer = prompt.Replace(" ", "");
+        words = prompt.Split(' ');
 
-        int numLetters = 0;
-        for (int i = 0; i < words.Length; i++)
-        {
-            numLetters += words[i].Length;
-        }
-
-        int wordLength = 0;
+        int numLetters = words.Sum(w => w.Length);
         int posY = Screen.height / 2;
         int posX = Screen.width / 2;
-        int cubeSize = 35;
-        List<int> indexes;
+        int offset = separationVal / 2;
 
-        boxes = new GameObject[words.Length, numLetters + 1];
+        boxes = new List<GameObject>();
+
+        int totalWordLength = words.Sum(w => w.Length);
+        int startX = posX - (totalWordLength / 2) * separationVal + offset;
+
+        int totalWordHeight = words.Length * separationVal * 2;
+        int startY = posY + (totalWordHeight / 2) - separationVal - offset;
+
 
         for (int i = 0; i < words.Length; i++)
         {
-            wordLength = words[i].Length;
+            int wordLength = words[i].Length;
+            int wordStartX = startX + (totalWordLength - words[i].Length) / 2 * separationVal;
+            float wordStartY = startY - i * separationVal * 2 + (words.Length - 1 - i) * (Screen.height / 2 - startY) / (words.Length - 1);
 
-            int cont = (wordLength / 2) * -1;
-            indexes = new List<int>(wordLength);
-            indexes.Add(-1);
+            // Convertimos la palabra en una lista de caracteres para poder eliminar las letras utilizadas
+            List<char> letters = words[i].ToList();
 
-            GameObject son = transform.GetChild(0).gameObject;
             for (int j = 0; j < wordLength; j++)
             {
-                GameObject box = Instantiate(boxPrefab, new Vector3(posX + cubeSize * cont, posY, 0), Quaternion.identity);
-                box.transform.parent = son.transform;
+                GameObject box = Instantiate(boxPrefab, new Vector3(wordStartX + j * separationVal, wordStartY, 0), Quaternion.identity, transform.GetChild(0).transform);
 
-                boxes[i, j] = box;
+                // Seleccionamos aleatoriamente una letra de la lista y la eliminamos
+                int randomIndex = Random.Range(0, letters.Count);
+                char letter = letters[randomIndex];
+                letters.RemoveAt(randomIndex);
 
-                GameObject cube = Instantiate(letterBoxPrefab, new Vector3(posX + cubeSize * cont, posY, 0), Quaternion.identity);
-                int randomLetterIndex = -1;
-                do
-                {
-                    randomLetterIndex = Random.Range(0, wordLength);
-                    
-                } while (indexes.Contains(randomLetterIndex));
-                indexes.Add(randomLetterIndex);
-
-                cube.transform.GetChild(0).GetComponent<TextMesh>().text = words[i][randomLetterIndex].ToString();
-                cont++;
+                box.transform.GetChild(0).GetComponent<TextMesh>().text = letter.ToString();
+                boxes.Add(box);
             }
-            posY -= cubeSize * 2;
         }
-    }
-
-    public void MovingLetters()
-    {
-        movingLetters = !movingLetters;
-
-        if (!movingLetters)
-            for (int i = 0; i < boxes.GetLength(0); i++)
-            {
-                for (int j = 0; j < words[i].Length; j++)
-                {
-                    boxes[i, j].transform.GetComponent<escaperoom1_6_box_logic>().LettersMoved();
-                }
-            }
     }
 
     public void SubmitAnswer()
     {
-        string answer = " ";
-        for (int i = 0; i < boxes.GetLength(0); i++)
-        {
-            for (int j = 0; j < words[i].Length; j++)
-            {
-                answer += boxes[i, j].transform.GetComponent<escaperoom1_6_box_logic>().GetLetter();
-            }
-            answer += " ";
-        }
+        var sortedBoxes = boxes.OrderByDescending(box => box.transform.position.y)
+                       .ThenBy(box => box.transform.position.x)
+                       .ToList();
 
-        Debug.Log("La respuesta es: " + answer);
+        int index = 0;
+        int boxIndex = 0;
+        while (index < answer.Length && sortedBoxes.Count > 0)
+        {
+            // Obtenemos la letra de la caja
+            char letter = sortedBoxes[boxIndex].transform.GetChild(0).GetComponent<TextMesh>().text[0];
+
+            if (letter == answer[index])
+            {
+                sortedBoxes[boxIndex].GetComponent<Renderer>().material = correctAnswer;
+                boxes.Remove(sortedBoxes[boxIndex]);
+                sortedBoxes.RemoveAt(boxIndex);
+                answer = answer.Remove(index, 1);
+            }
+            else
+            {
+                sortedBoxes[boxIndex].GetComponent<Renderer>().material = wrongAnswer;
+                index++;
+                boxIndex++;
+            }
+        }
     }
 }

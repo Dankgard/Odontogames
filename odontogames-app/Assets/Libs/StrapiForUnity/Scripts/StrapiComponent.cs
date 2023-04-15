@@ -427,7 +427,6 @@ public class StrapiComponent : MonoBehaviour
     public IEnumerator GetStrapiUserTeamData(int id)
     {
         string endpoint = $"api/teams/{id}?populate=members";
-        Debug.Log(endpoint);
         yield return GetGroupDataRequest(endpoint);
     }
     public IEnumerator GetStrapiUserFreePlayers(int id)
@@ -460,6 +459,30 @@ public class StrapiComponent : MonoBehaviour
         yield return StartCoroutine(GetStrapiUserTeamsFromServer(endpoint));
     }
 
+    public void UpdatePlayerScore(int score)
+    {
+        StartCoroutine(UpdatePlayerScoreCoroutine(score));
+    }
+
+    private IEnumerator UpdatePlayerScoreCoroutine(int score)
+    {
+        var jsonObject = new JObject(
+            new JProperty("score", score)
+        );
+        var jsonString = jsonObject.ToString();
+
+        string endpoint = $"api/users/{userID}?populate=team";
+
+        yield return PutRequest(endpoint, jsonString);
+        yield return GetUpdatedUserData(endpoint);
+
+        if (AuthenticatedUser.team != null)
+        {
+            Debug.Log("Updating player team");
+            // TODO metodo para actualizar la puntuacion del grupo strapi
+        }
+    }
+
     #endregion
 
     #region Delete_functions
@@ -480,10 +503,24 @@ public class StrapiComponent : MonoBehaviour
     {
         OnAuthStarted?.Invoke();
         string endpoint = $"api/teams/{id}";
-        StartCoroutine(DeleteRequest(endpoint));
 
-        // TODO
-        // Hacer que group de todos los usuarios sea None
+        StrapiUserTeam team = GetGroupByID(id);
+        Debug.Log(team.teamname);
+        Debug.Log(team.members);
+        for (int i = 0; i < team.members.data.Length; i++)
+        {
+            int userId = team.members.data[i].id;
+            string userEndPoint = $"api/users/{userId}";
+
+            var userObject = new JObject(
+             new JProperty("group", "None"));
+            
+            string jsonString = JsonConvert.SerializeObject(userObject);
+
+            StartCoroutine(PutRequest(userEndPoint, jsonString));
+        }
+
+        StartCoroutine(DeleteRequest(endpoint));
     }
     #endregion
     #endregion
@@ -773,6 +810,22 @@ public class StrapiComponent : MonoBehaviour
     public StrapiUserTeam GetGroup()
     {
         return strapiUserTeam;
+    }
+
+    public StrapiUserTeam GetGroupByID(int id)
+    {
+        StrapiUserTeam team = null;
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i].attributes.id == id)
+            {
+                team = teams[i].attributes;
+                break;
+            }
+        }
+
+        return team;
     }
     #endregion
 }

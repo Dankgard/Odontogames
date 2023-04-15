@@ -1,5 +1,3 @@
-    using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DragWithMouse : MonoBehaviour
@@ -7,43 +5,49 @@ public class DragWithMouse : MonoBehaviour
     private Vector3 mouseOffset;
     private float mouseZCoord;
 
+    public float dragSpeed = 10f;
+    public float shootForce = 1000f;
     public bool useRigidbody = false;
-    Rigidbody rb;
+    private Rigidbody rb;
 
-    void Awake()
+    private void Awake()
     {
         if (useRigidbody)
             rb = gameObject.GetComponent<Rigidbody>();
     }
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
-        mouseZCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
-        mouseOffset = gameObject.transform.position - GetMouseWorldPos();
+        mouseZCoord = CamerasManager.camerasManagerInstance.GetCurrentCamera().WorldToScreenPoint(transform.position).z;
+        mouseOffset = transform.position - GetMouseWorldPos();
     }
 
     private Vector3 GetMouseWorldPos()
     {
         Vector3 mousePoint = Input.mousePosition;
         mousePoint.z = mouseZCoord;
-        return Camera.main.ScreenToWorldPoint(mousePoint);
+        return CamerasManager.camerasManagerInstance.GetCurrentCamera().ScreenToWorldPoint(mousePoint);
     }
 
-    void OnMouseUp()
+    private void OnMouseUp()
     {
         if (useRigidbody)
-            rb.velocity = Vector3.zero;
+        {
+            Vector3 direction = new Vector3(-1, 0, 0);
+            rb.AddForce(direction * shootForce);
+
+        }
     }
 
-    void OnMouseDrag()
+    private void OnMouseDrag()
     {
-        if(useRigidbody)
+        if (useRigidbody)
         {
-            rb.velocity = GetMouseWorldPos() + mouseOffset;
+            rb.MovePosition(Vector3.Lerp(transform.position, GetMouseWorldPos() + mouseOffset, dragSpeed * Time.deltaTime));
         }
         else
         {
-            transform.position = GetMouseWorldPos() + mouseOffset;
+            transform.position = Vector3.Lerp(transform.position, GetMouseWorldPos() + mouseOffset, dragSpeed * Time.deltaTime);
         }
     }
 }

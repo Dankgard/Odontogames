@@ -37,6 +37,8 @@ using UnityEngine;
             }
             return _updatedAt;
         }
+
+        public StrapiUserTeam team;
     }
 
     [Serializable]
