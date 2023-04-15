@@ -32,7 +32,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     {
         if (picturesSpawned <= 0)
         {
-            Debug.Log("Juego terminado. Bien hecho!");
+            //Debug.Log("Juego terminado. Bien hecho!");
             //StrapiComponent._instance.UpdatePlayerScore(score);
         }
 
@@ -64,7 +64,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         Texture2D texture = null;
         PickRandomTexture(out texture);
         currentImage.GetComponent<ShowImage>().SetTexture(texture);
-        picturesSpawned++;
+        picturesSpawned--;
     }
 
     void PickRandomTexture(out Texture2D texture)
