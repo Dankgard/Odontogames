@@ -8,6 +8,7 @@ public class DragWithMouse : MonoBehaviour
     public float dragSpeed = 10f;
     public float shootForce = 1000f;
     public bool useRigidbody = false;
+    public bool throwable = true;
     private Rigidbody rb;
 
     private void Awake()
@@ -33,9 +34,25 @@ public class DragWithMouse : MonoBehaviour
     {
         if (useRigidbody)
         {
-            Vector3 direction = new Vector3(-1, 0, 0);
-            rb.AddForce(direction * shootForce);
+            if (throwable)
+            {
+                Vector3 direction = new Vector3(-1, 0, 0);
+                rb.AddForce(direction * shootForce);
+            }
+            else
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
+    }
 
+    public void StopMovement()
+    {
+        if (useRigidbody)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 

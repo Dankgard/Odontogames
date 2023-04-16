@@ -35,4 +35,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GroupUserList.unity
     guid: 88d39f47e11334f48917e0fc902f61ba
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_2.unity
+    guid: 78d71cad50ccb4740bf92adaa0b4bb2c
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_3.unity
+    guid: 14b4620ef1ed94c4d8b77d2a1d2e1867
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_4.unity
+    guid: da1463b9977801c41a97a8020fec9d9a
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_5.unity
+    guid: 5952053cf07d2684387b1dcd28164893
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_6.unity
+    guid: f918a30aee532f44b8f05bd24befea6b
+  - enabled: 1
+    path: Assets/Scenes/escaperoom1_7.unity
+    guid: aae4635e85642c146af7b1f709211272
   m_configObjects: {}

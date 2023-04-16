@@ -8,6 +8,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.IO;
 
 public class StrapiComponent : MonoBehaviour
 {
@@ -171,6 +174,32 @@ public class StrapiComponent : MonoBehaviour
             OnAuthFail?.Invoke(err);
             Debug.Log($"Authentication Error: {err}");
         });
+    }
+
+    public void GetNotesFromServer()
+    {
+        StartCoroutine(GetNotesFromServerCoroutine("api/users"));
+    }
+
+    private IEnumerator GetNotesFromServerCoroutine(string endpoint)
+    {
+        yield return GetListOfUsersFromServerCoroutine(endpoint);
+        Document document = new Document();
+        Debug.Log("Entro");
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "prueba.pdf");
+        PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.OpenOrCreate));
+        document.Open();
+
+        for (int i = 0; i < users.Length; i++)
+        {
+            string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
+                " " + users[i].username + " " + users[i].email + ": " + users[i].score + " puntos.\n";
+            Paragraph paragraph = new Paragraph(line);
+            document.Add(paragraph);
+        }        
+
+        document.Close();
+        Debug.Log("Salio");
     }
 
     // AQUI EMPIEZAN LOS METODOS DE USUARIO

@@ -19,6 +19,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     private int picturesSpawned = 0;
     private int score = 0;
+    private bool gameEnded = false;
 
     void Start()
     {
@@ -30,10 +31,11 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     void Update()
     {
-        if (picturesSpawned <= 0)
+        if (picturesSpawned <= 0 && !gameEnded)
         {
             //Debug.Log("Juego terminado. Bien hecho!");
-            //StrapiComponent._instance.UpdatePlayerScore(score);
+            StrapiComponent._instance.UpdatePlayerScore(score);
+            gameEnded = true;
         }
 
         for (int i = 0; i < platforms.Length; i++)

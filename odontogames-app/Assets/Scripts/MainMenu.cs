@@ -55,4 +55,9 @@ public class MainMenu : MonoBehaviour
     {
         MySceneManager.instance.LoadScene("PlayLevelMenu");
     }
+
+    public void OnDownloadGrades()
+    {
+        StrapiComponent._instance.GetNotesFromServer();
+    }
 }
