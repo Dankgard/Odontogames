@@ -28,6 +28,8 @@ TagManager:
   - letter3
   - letter4
   - letter5
+  - music
+  - sound
   layers:
   - Default
   - TransparentFX

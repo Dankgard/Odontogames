@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class SoundManager : MonoBehaviour
     AudioSource source;
 
     public AudioClip[] sounds;
+
+    Slider soundSlider;
 
     private void Awake()
     {
@@ -25,7 +28,15 @@ public class SoundManager : MonoBehaviour
         }
 
         source = GetComponent<AudioSource>();
+        soundSlider = GameObject.FindWithTag("sound").GetComponent<Slider>();
+
     }
+
+    public void SetSoundVolume()
+    {
+        source.volume = soundSlider.value;
+    }
+
 
     public void PlaySound(int sound)
     {
