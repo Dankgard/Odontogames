@@ -12,29 +12,27 @@ namespace StrapiForUnity
         public string type;
 
         [SerializeField]
-        private string created_at;
+        private string createdAt;
         private DateTime? _createdAt;
         public DateTime? CreatedAt()
         {
             if (_createdAt == null)
             {
-                _createdAt = Convert.ToDateTime(created_at);
+                _createdAt = Convert.ToDateTime(createdAt);
             }
             return _createdAt;
         }
 
         [SerializeField]
-        private string updated_at;
+        private string updatedAt;
         private DateTime? _updatedAt;
         public DateTime? UpdatedAt()
         {
             if (_updatedAt == null)
             {
-                _updatedAt = Convert.ToDateTime(updated_at);
+                _updatedAt = Convert.ToDateTime(updatedAt);
             }
             return _updatedAt;
         }
-
-        public int nb_users;
     }
 }

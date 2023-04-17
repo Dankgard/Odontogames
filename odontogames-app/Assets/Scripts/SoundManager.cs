@@ -23,7 +23,6 @@ public class SoundManager : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        Debug.Log("Instance " + instance);
 
         source = GetComponent<AudioSource>();
     }

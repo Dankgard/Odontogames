@@ -21,7 +21,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     private int score = 0;
     private bool gameEnded = false;
 
-    void Start()
+    private void Start()
     {
         numberOfPictures = textures.Length;
         CreateImagePrefab();
@@ -29,7 +29,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         picturesSpawned = numberOfPictures;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         if (picturesSpawned <= 0 && !gameEnded)
         {
@@ -41,7 +41,10 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         for (int i = 0; i < platforms.Length; i++)
         {
             if (platforms[i].IsPlatformMoving())
+            {
                 CheckAnswer(platforms[i].GetPlatformName());
+                break;
+            }
         }
     }
 
@@ -57,7 +60,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         CreateImagePrefab();
     }
 
-    void CreateImagePrefab()
+    private void CreateImagePrefab()
     {
         currentImage = Instantiate(prefab, transform.GetChild(0).position, Quaternion.identity); // Crea una instancia del prefab en la posición especificada
         currentImage.GetComponent<ShowImage>().SetPanel(panel);
@@ -69,7 +72,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         picturesSpawned--;
     }
 
-    void PickRandomTexture(out Texture2D texture)
+    private void PickRandomTexture(out Texture2D texture)
     {
         if (numberOfPictures == 0)
         {
@@ -86,5 +89,10 @@ public class EscapeRoom1_1_logic : MonoBehaviour
             textures[i] = textures[i + 1];
         }
         numberOfPictures--;
+    }
+
+    public void OnShowImagePressed()
+    {
+        currentImage.GetComponent<ShowImage>().ShowPanel();
     }
 }

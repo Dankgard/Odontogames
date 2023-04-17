@@ -5,49 +5,50 @@ using UnityEngine;
 public class PauseMenu : MonoBehaviour
 {
     public GameObject pauseMenuUI;
-    public GameObject playerCharacter;
-    private bool menuOpen;
-    private bool closeMenu;
+    public GameObject pauseButton;
 
-    void Start()
+    private bool openMenu = false;
+    private bool menuIsClosed = true;
+
+    private void Start()
     {
-        menuOpen = false;
-        closeMenu = true;
         pauseMenuUI.SetActive(false);
     }
 
-    void Update()
+    public void OnPausePressed()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-        {
-            menuOpen = !menuOpen;
-        }
-        if (menuOpen)
+        openMenu = !openMenu;
+        if (openMenu)
         {
             Pause();
         }
-        else if (!menuOpen)
+        else if (!openMenu)
         {
-            if (!closeMenu)
+            if (!menuIsClosed)
             {
                 Continue();
             }
         }
     }
 
-    public void Pause()
+    public void OnContinuePressed()
     {
-        playerCharacter.GetComponent<PlayerBehavior>().enabled = false;
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
-        closeMenu = true;
+        Continue();
     }
 
-    public void Continue()
+    private void Pause()
     {
-        playerCharacter.GetComponent<PlayerBehavior>().enabled = true;
+        pauseMenuUI.SetActive(true);
+        pauseButton.SetActive(false);
+        menuIsClosed = true;
+        Time.timeScale = 0f;
+    }
+
+    private void Continue()
+    {
         pauseMenuUI.SetActive(false);
-        closeMenu = false;
+        pauseButton.SetActive(true);
+        menuIsClosed = false;
         Time.timeScale = 1f;
     }
 

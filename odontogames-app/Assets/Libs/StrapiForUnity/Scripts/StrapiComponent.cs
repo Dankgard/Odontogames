@@ -185,7 +185,6 @@ public class StrapiComponent : MonoBehaviour
     {
         yield return GetListOfUsersFromServerCoroutine(endpoint);
         Document document = new Document();
-        Debug.Log("Entro");
         string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "prueba.pdf");
         PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.OpenOrCreate));
         document.Open();
@@ -199,7 +198,6 @@ public class StrapiComponent : MonoBehaviour
         }        
 
         document.Close();
-        Debug.Log("Salio");
     }
 
     // AQUI EMPIEZAN LOS METODOS DE USUARIO
@@ -571,6 +569,8 @@ public class StrapiComponent : MonoBehaviour
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
         Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
         Debug.Log(userJWT);
+
+        StartCoroutine(GetUpdatedUserData($"api/users/{userID}"));
     }
 
     #region POST_request_functions
