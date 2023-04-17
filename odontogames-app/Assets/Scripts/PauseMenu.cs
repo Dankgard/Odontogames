@@ -22,7 +22,7 @@ public class PauseMenu : MonoBehaviour
         {
             Pause();
         }
-        else if (!openMenu)
+        else
         {
             if (!menuIsClosed)
             {
@@ -40,7 +40,7 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenuUI.SetActive(true);
         pauseButton.SetActive(false);
-        menuIsClosed = true;
+        menuIsClosed = false;
         Time.timeScale = 0f;
     }
 
@@ -48,7 +48,7 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenuUI.SetActive(false);
         pauseButton.SetActive(true);
-        menuIsClosed = false;
+        menuIsClosed = true;
         Time.timeScale = 1f;
     }
 

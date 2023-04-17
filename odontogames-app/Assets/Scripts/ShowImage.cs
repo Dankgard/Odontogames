@@ -10,7 +10,6 @@ public class ShowImage : MonoBehaviour
 
     public void SetPanel(GameObject panel)
     {
-
         // Asegurarse de que se haya asignado un objeto de panel
         if (panel == null)
         {

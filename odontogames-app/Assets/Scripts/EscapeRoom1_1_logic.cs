@@ -93,6 +93,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     public void OnShowImagePressed()
     {
+        //SoundManager.instance.PlaySound(1);
         currentImage.GetComponent<ShowImage>().ShowPanel();
     }
 }

@@ -37,7 +37,6 @@ public class SoundManager : MonoBehaviour
         source.volume = soundSlider.value;
     }
 
-
     public void PlaySound(int sound)
     {
         source.clip = sounds[sound];
