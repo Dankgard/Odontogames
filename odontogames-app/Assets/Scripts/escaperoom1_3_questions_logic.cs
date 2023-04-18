@@ -88,6 +88,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
     {
         yield return new WaitForSeconds(3.5f);
         SoundManager.instance.PlaySound(2);
+        StrapiComponent._instance.UpdatePlayerScore(score);
         MySceneManager.instance.LoadScene("MinigameEnd");
         yield return new WaitForSeconds(1.5f);
     }
