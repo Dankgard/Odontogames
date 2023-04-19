@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 public class escaperoom1_6 : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class escaperoom1_6 : MonoBehaviour
 
     public Material correctAnswer;
     public Material wrongAnswer;
+
+    private int score;
+    private bool gameEnded = false;
 
     void Start()
     {
@@ -59,6 +63,25 @@ public class escaperoom1_6 : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (boxes.Count <= 0 && !gameEnded)
+        {
+            gameEnded = true;
+            EndGame();
+        }
+    }
+
+    private void EndGame()
+    {
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+    }
+
     public void SubmitAnswer()
     {
         var sortedBoxes = boxes.OrderByDescending(box => box.transform.position.y)
@@ -78,13 +101,20 @@ public class escaperoom1_6 : MonoBehaviour
                 boxes.Remove(sortedBoxes[boxIndex]);
                 sortedBoxes.RemoveAt(boxIndex);
                 answer = answer.Remove(index, 1);
+                score++;
             }
             else
             {
                 sortedBoxes[boxIndex].GetComponent<Renderer>().material = wrongAnswer;
                 index++;
                 boxIndex++;
+                score--;
             }
         }
+    }
+
+    private IEnumerator CorrectAnswer()
+    {
+        yield return new WaitForSeconds(1.5f);
     }
 }
