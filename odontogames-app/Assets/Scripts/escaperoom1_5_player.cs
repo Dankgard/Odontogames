@@ -2,27 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class escaperoom1_5_player : MonoBehaviour
 {
-    public GameObject player;
-
     public int numQuestions;
-    private string[] questions;
-    private string[] answers;
-    private string[] correctAnswer;
 
-    private GameObject[] rooms;
+    public GameObject room;
+    public GameObject fadeToBlackPanel;
 
     public Texture[] textures;
 
-    int currentQuestion = 0;
-
-    public GameObject roomPrefab;
-    public float spaceBetweenRooms = 2.0f;
-
     public string filename = "assets/JSON/escaperoom_1_5.json";
+
+    public GameObject doorsButton, textButton, imageButton;
+
+    private int score = 0;
+
+    private int currentQuestion = 0;
+
+    private string[] questions;
+    private string[] answers;
+    private string[] correctAnswer;
 
     void Awake()
     {
@@ -74,6 +77,8 @@ public class escaperoom1_5_player : MonoBehaviour
                 }
             }
         }
+
+        fadeToBlackPanel.SetActive(false);
     }
 
     void Start()
@@ -83,34 +88,57 @@ public class escaperoom1_5_player : MonoBehaviour
             Debug.LogError("Textures array size must be equal to number of questions");
         }
 
-        rooms = new GameObject[numQuestions];
+        int answersIndex = currentQuestion * 3;
+        room.transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex]);
+        room.transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 1]);
+        room.transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 2]);
 
-        for (int i = 0; i < numQuestions; i++)
+        room.transform.GetChild(6).GetComponent<Renderer>().material.mainTexture = textures[currentQuestion];
+        room.transform.GetChild(7).GetChild(0).GetComponent<TextMeshPro>().text = questions[currentQuestion];
+
+        // Child 0 of this GO must always be an empty GO
+        room.transform.parent = transform.GetChild(0);
+
+        doorsButton.SetActive(false);
+    }
+
+    private void SetRoom(int currentIndex)
+    {
+        StartCoroutine(SetRoomCoroutine(currentIndex));
+    }
+
+    private IEnumerator SetRoomCoroutine(int currentIndex)
+    {
+        yield return FadeToBlack(1.5f);
+        int answersIndex = currentIndex * 3;
+        room.transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex]);
+        room.transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 1]);
+        room.transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 2]);
+
+        room.transform.GetChild(6).GetComponent<Renderer>().material.mainTexture = textures[currentIndex];
+        room.transform.GetChild(7).GetChild(0).GetComponent<TextMeshPro>().text = questions[currentIndex];
+
+        // Child 0 of this GO must always be an empty GO
+        room.transform.parent = transform.GetChild(0);
+    }
+
+    private IEnumerator FadeToBlack(float time)
+    {
+        fadeToBlackPanel.SetActive(true);
+
+        fadeToBlackPanel.GetComponent<Image>().color = new Color(0, 0, 0, 0);
+
+        // Gradualmente incrementar la opacidad del color de la imagen del panel
+        float timer = 0;
+        while (timer < time)
         {
-            Vector3 pos = transform.position + (transform.forward * spaceBetweenRooms * i);
-            GameObject instance = Instantiate(roomPrefab, pos, Quaternion.identity);
-
-            int answersIndex = i * 3;
-            instance.transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex]);
-            instance.transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().SetGameLogicManagerReference(transform.GetComponent<escaperoom1_5_player>());
-            instance.transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().SetPlayerReference(player);
-
-            instance.transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 1]);
-            instance.transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().SetGameLogicManagerReference(transform.GetComponent<escaperoom1_5_player>());
-            instance.transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().SetPlayerReference(player);
-
-            instance.transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().SetAnswer(answers[answersIndex + 2]);
-            instance.transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().SetGameLogicManagerReference(transform.GetComponent<escaperoom1_5_player>());
-            instance.transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().SetPlayerReference(player);
-
-            instance.transform.GetChild(6).GetComponent<Renderer>().material.mainTexture = textures[i];
-            instance.transform.GetChild(7).GetChild(0).GetComponent<TextMesh>().text = questions[i];
-
-            // Child 0 of this GO must always be an empty GO
-            instance.transform.parent = transform.GetChild(0);
-
-            rooms[i] = instance;
+            float alpha = Mathf.Lerp(0, 1, timer / time);
+            fadeToBlackPanel.GetComponent<Image>().color = new Color(0, 0, 0, alpha);
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        fadeToBlackPanel.SetActive(false);
     }
 
     public void CheckAnswer(string answer)
@@ -118,33 +146,69 @@ public class escaperoom1_5_player : MonoBehaviour
         if (answer == answers[currentQuestion])
         {
             Debug.Log("Correcto");
+            score++;
         }
-        else Debug.Log("Incorrecto");
+        else {
+            Debug.Log("Incorrecto");
+            score--;
+        }
 
 
-        if (currentQuestion < rooms.Length - 1)
+        if (currentQuestion < questions.Length - 1)
         {
-            rooms[currentQuestion].transform.GetChild(0).GetChild(0).GetComponent<escaperoom1_5_door>().StopWorking();
-            rooms[currentQuestion].transform.GetChild(0).GetChild(1).GetComponent<escaperoom1_5_door>().StopWorking();
-            rooms[currentQuestion].transform.GetChild(0).GetChild(2).GetComponent<escaperoom1_5_door>().StopWorking();
-
             currentQuestion++;
+            SetRoom(currentQuestion);
         }
         else
         {
-            Debug.Log("Juego terminado");
-            SoundManager.instance.PlaySound(2);
-            MySceneManager.instance.LoadScene("MinigameEnd");
+            EndGame();
         }
+    }
+
+    private void EndGame()
+    {
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        CamerasManager.camerasManagerInstance.SwapCamera(0);
+        SoundManager.instance.PlaySound(2);
+        StrapiComponent._instance.UpdatePlayerScore(score);
+        yield return new WaitForSeconds(1.5f);
+        MySceneManager.instance.LoadScene("MinigameEnd");
+    }
+
+    public void OnInspectTextPressed()
+    {
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
+        textButton.SetActive(false);
+        imageButton.SetActive(true);
+        doorsButton.SetActive(true);
+    }
+    public void OnInspectImagePressed()
+    {
+        CamerasManager.camerasManagerInstance.SwapCamera(2);
+        textButton.SetActive(true);
+        imageButton.SetActive(false);
+        doorsButton.SetActive(true);
+    }
+
+    public void OnInspectAnswersPressed()
+    {
+        CamerasManager.camerasManagerInstance.SwapCamera(0);
+        textButton.SetActive(true);
+        imageButton.SetActive(true);
+        doorsButton.SetActive(false);
     }
 
     private void StartTransitionBetweenRooms()
     {
-        player.transform.GetComponent<PlayerBehavior>().enabled = false;
+        //player.transform.GetComponent<PlayerBehavior>().enabled = false;
     }
 
     private void EndTransitionBetweenRooms()
     {
-        player.transform.GetComponent<PlayerBehavior>().enabled = true;
+        //player.transform.GetComponent<PlayerBehavior>().enabled = true;
     }
 }
