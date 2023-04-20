@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class escaperoom1_4_questions : MonoBehaviour
 {
+    public GameObject door;
+
     public string[] question;
     public string[] answer1;
     public string[] answer2;
@@ -26,6 +28,8 @@ public class escaperoom1_4_questions : MonoBehaviour
 
     void Awake()
     {
+        door.transform.GetComponent<Animator>().enabled = false;
+
         line1 = gameObject.transform.GetChild(0).GetComponent<TextMeshPro>();
         line2 = gameObject.transform.GetChild(1).GetComponent<TextMesh>();
         line3 = gameObject.transform.GetChild(2).GetComponent<TextMesh>();
@@ -60,9 +64,12 @@ public class escaperoom1_4_questions : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         CamerasManager.camerasManagerInstance.SwapCamera(1);
+        yield return new WaitForSeconds(1.5f);
         SoundManager.instance.PlaySound(2);
-        StrapiComponent._instance.UpdatePlayerScore(score);
-        yield return new WaitForSeconds(3.5f);
+        //StrapiComponent._instance.UpdatePlayerScore(score);
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
+        yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }
 

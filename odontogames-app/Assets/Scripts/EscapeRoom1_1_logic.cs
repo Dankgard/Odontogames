@@ -7,6 +7,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 {
     public GameObject panel; // El panel de la UI
     public GameObject prefab; // El prefab que se va a generar
+    public GameObject door;
 
     // un array de las plataformas que se tienen que llenar
     public EscapeRoom1_1_AnswerBox[] platforms;
@@ -23,6 +24,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     private void Start()
     {
+        door.transform.GetComponent<Animator>().enabled = false;
         numberOfPictures = textures.Length;
         CreateImagePrefab();
         CamerasManager.camerasManagerInstance.SwapCamera(0);
@@ -33,9 +35,8 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     {
         if (picturesSpawned <= 0 && !gameEnded)
         {
-            //Debug.Log("Juego terminado. Bien hecho!");
-            StrapiComponent._instance.UpdatePlayerScore(score);
             gameEnded = true;
+            EndGame();
         }
 
         for (int i = 0; i < platforms.Length; i++)
@@ -93,7 +94,24 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     public void OnShowImagePressed()
     {
-        //SoundManager.instance.PlaySound(1);
+        SoundManager.instance.PlaySound(1);
         currentImage.GetComponent<ShowImage>().ShowPanel();
+    }
+
+    private void EndGame()
+    {
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
+        SoundManager.instance.PlaySound(2);
+        StrapiComponent._instance.UpdatePlayerScore(score);
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
+        yield return new WaitForSeconds(1.5f);
+        MySceneManager.instance.LoadScene("MinigameEnd");
     }
 }

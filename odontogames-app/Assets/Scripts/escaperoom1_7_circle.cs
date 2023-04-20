@@ -9,6 +9,7 @@ public class escaperoom1_7_circle : MonoBehaviour
     public TextMesh hint;
     public TextMesh question;
     public GameObject questionsManager;
+    public GameObject door;
 
     public InputField answerInput;
 
@@ -33,19 +34,22 @@ public class escaperoom1_7_circle : MonoBehaviour
 
     int availableLetters;
 
-    void Awake()
+    private int score = 0;
+
+    private void Awake()
     {
         letters = new GameObject[numberOfLetters+1];
         letterStatus = new int[numberOfLetters + 1];
         availableLetters = numberOfLetters;
     }
 
-    void Start()
+    private void Start()
     {
+        door.transform.GetComponent<Animator>().enabled = false;
         SpawnCircle();
     }
 
-    void SpawnCircle()
+    private void SpawnCircle()
     {
         float angleIncrement = 360f / numberOfLetters;
 
@@ -74,12 +78,12 @@ public class escaperoom1_7_circle : MonoBehaviour
         question.text = questions[index];
     }
 
-    void LoadLetterMaterial(int color)
+    private void LoadLetterMaterial(int color)
     {
         letters[activeLetter].transform.GetChild(0).GetComponent<Renderer>().material = colors[color];
     }
 
-    void NextLetter()
+    private void NextLetter()
     {
         if (activeLetter < numberOfLetters - 1)
         {
@@ -120,7 +124,7 @@ public class escaperoom1_7_circle : MonoBehaviour
         }
         else
         {
-            EndOfGame();
+            EndGame();
         }
     }
 
@@ -137,7 +141,8 @@ public class escaperoom1_7_circle : MonoBehaviour
 
     public void CorrectAnswer()
     {
-        Debug.Log(availableLetters);
+        score++;
+        SoundManager.instance.PlaySound(5);
         if (availableLetters > 0)
         {
             LoadLetterMaterial(1);
@@ -147,7 +152,7 @@ public class escaperoom1_7_circle : MonoBehaviour
         }
         else
         {
-            EndOfGame();
+            EndGame();
         }
     }
 
@@ -163,14 +168,24 @@ public class escaperoom1_7_circle : MonoBehaviour
         }
         else
         {
-            EndOfGame();
+            EndGame();
         }
     }
 
-    void EndOfGame()
+    private void EndGame()
     {
-        Debug.Log("Game ended");
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
+        //StrapiComponent._instance.UpdatePlayerScore(score);
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
+        yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }
 }

@@ -4336,6 +4336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panel: {fileID: 1212609644}
   prefab: {fileID: 3043072723099356741, guid: d676846cf1e545a47aee9fe18c72441c, type: 3}
+  door: {fileID: 814237476}
   platforms:
   - {fileID: 4256015035279325396}
   - {fileID: 817269178}

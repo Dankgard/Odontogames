@@ -10,6 +10,7 @@ public class escaperoom1_6 : MonoBehaviour
 
     public int separationVal = 35;
     public GameObject boxPrefab;
+    public GameObject door;
 
     private string[] words;
     private List<GameObject> boxes;
@@ -19,10 +20,21 @@ public class escaperoom1_6 : MonoBehaviour
 
     private int score;
     private bool gameEnded = false;
+    private bool doorTransition = false;
+
+    // Door animation
+    public GameObject bars;
+    public GameObject top;
+    private int numBars = 6;
+    private int barIndex = 5;
+    private int answerLenght;
 
     void Start()
     {
+        door.transform.GetComponent<Animator>().enabled = false;
+
         answer = prompt.Replace(" ", "");
+        answerLenght = answer.Length;
         words = prompt.Split(' ');
 
         int numLetters = words.Sum(w => w.Length);
@@ -65,7 +77,7 @@ public class escaperoom1_6 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (boxes.Count <= 0 && !gameEnded)
+        if (boxes.Count <= 0 && !gameEnded && !doorTransition)
         {
             gameEnded = true;
             EndGame();
@@ -80,16 +92,25 @@ public class escaperoom1_6 : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         yield return new WaitForSeconds(1.5f);
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
+        SoundManager.instance.PlaySound(2);
+        StrapiComponent._instance.UpdatePlayerScore(score);
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
+        yield return new WaitForSeconds(1.5f);
+        MySceneManager.instance.LoadScene("MinigameEnd");
     }
 
     public void SubmitAnswer()
     {
+        doorTransition = true;
         var sortedBoxes = boxes.OrderByDescending(box => box.transform.position.y)
                        .ThenBy(box => box.transform.position.x)
                        .ToList();
 
         int index = 0;
         int boxIndex = 0;
+        int n = 0;
         while (index < answer.Length && sortedBoxes.Count > 0)
         {
             // Obtenemos la letra de la caja
@@ -102,6 +123,7 @@ public class escaperoom1_6 : MonoBehaviour
                 sortedBoxes.RemoveAt(boxIndex);
                 answer = answer.Remove(index, 1);
                 score++;
+                n++;
             }
             else
             {
@@ -111,10 +133,29 @@ public class escaperoom1_6 : MonoBehaviour
                 score--;
             }
         }
+        StartCoroutine(CorrectAnswer(n));
     }
 
-    private IEnumerator CorrectAnswer()
+    private IEnumerator CorrectAnswer(int n)
     {
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
         yield return new WaitForSeconds(1.5f);
+        for (int i = 0; i < (n * numBars) / answerLenght; i++)
+        {
+            StartCoroutine(RaiseBar());
+            barIndex--;
+        }
+        yield return new WaitForSeconds(1.5f);
+        CamerasManager.camerasManagerInstance.SwapCamera(0);
+        doorTransition = false;
+    }
+
+    private IEnumerator RaiseBar()
+    {
+        Vector3 barPos = bars.transform.GetChild(barIndex).transform.position;
+        Vector3 newPos = new Vector3(barPos.x, top.transform.position.y, barPos.z);
+        bars.transform.GetChild(barIndex).transform.position = Vector3.MoveTowards(barPos, newPos, 35f);
+        SoundManager.instance.PlaySound(4);
+        yield return new WaitForSeconds(1f);
     }
 }

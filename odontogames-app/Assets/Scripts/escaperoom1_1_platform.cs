@@ -43,6 +43,7 @@ public class escaperoom1_1_platform : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         moving = true;
         currentPosition.y -= displacementSize;
+        SoundManager.instance.PlaySound(4);
         yield return new WaitForSeconds(0.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(0);
     }

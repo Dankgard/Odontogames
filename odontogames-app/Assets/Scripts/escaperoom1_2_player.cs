@@ -12,6 +12,7 @@ public class escaperoom1_2_player : MonoBehaviour
 
     public Texture[] questions;
     public GameObject[] answers;
+    public GameObject door;
 
     public Texture[] textures;
 
@@ -22,6 +23,7 @@ public class escaperoom1_2_player : MonoBehaviour
 
     private void Start()
     {
+        door.transform.GetComponent<Animator>().enabled = false;
         if (answers.Length != textures.Length || questions.Length != textures.Length || questions.Length != answers.Length)
         {
             Debug.LogError("all arrays must have the same lenght");
@@ -135,6 +137,7 @@ public class escaperoom1_2_player : MonoBehaviour
         yield return new WaitForSeconds(1f);
         lights[index].color = Color.green;
         lights[index].GetComponent<Renderer>().material = material;
+        SoundManager.instance.PlaySound(5);
         yield return new WaitForSeconds(1.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(0);
         transform.position = playerPos;
@@ -148,8 +151,10 @@ public class escaperoom1_2_player : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         CamerasManager.camerasManagerInstance.SwapCamera(1);
-        //SoundManager.instance.PlaySound(2);
-        //StrapiComponent._instance.UpdatePlayerScore(score);
+        SoundManager.instance.PlaySound(2);
+        StrapiComponent._instance.UpdatePlayerScore(score);
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

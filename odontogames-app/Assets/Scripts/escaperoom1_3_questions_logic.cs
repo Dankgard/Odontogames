@@ -11,6 +11,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
     public string[] answers;
 
     public GameObject canvas;
+    public GameObject door;
 
     public InputField answerInputField;
     public Text feedbackText;
@@ -22,6 +23,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
     private string correctAnswerMessage;
 
     private int score = 0;
+    private bool endgame = false;
 
     void Start()
     {
@@ -30,6 +32,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
             Debug.LogError("Error en el campo de preguntas y respuestas");
             return;
         }
+        door.transform.GetComponent<Animator>().enabled = false;
 
         wrongAnswerMessage = "¡Intenta otra vez!";
         correctAnswerMessage = "¡Excelente!";
@@ -41,23 +44,26 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
 
     public void OnSubmit()
     {
-        if (checkAnswer(answerInputField.text, index))
-        {
-            CorrectAnswer();
-            Debug.Log("Indice " + index);
-        }
-        else
-        {
-            feedbackText.GetComponent<Text>().color = Color.red;
-            feedbackText.text = wrongAnswerMessage;
-            score--;
-        }
-        answerInputField.text = "";
 
-        if (index == questions.Length)
+        if (index == questions.Length - 1 && !endgame)
         {
+            endgame = true;
             StartCoroutine(EndGame());
         }
+
+        if (!endgame)
+            if (checkAnswer(answerInputField.text, index))
+            {
+                CorrectAnswer();
+                Debug.Log("Indice " + index);
+            }
+            else
+            {
+                feedbackText.GetComponent<Text>().color = Color.red;
+                feedbackText.text = wrongAnswerMessage;
+                score--;
+            }
+            answerInputField.text = "";
     }
 
     public void CorrectAnswer()
@@ -86,11 +92,15 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
 
     private IEnumerator EndGame()
     {
-        yield return new WaitForSeconds(3.5f);
+        canvas.SetActive(false);
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
+        yield return new WaitForSeconds(2.5f);
         SoundManager.instance.PlaySound(2);
         StrapiComponent._instance.UpdatePlayerScore(score);
-        MySceneManager.instance.LoadScene("MinigameEnd");
+        door.transform.GetComponent<Animator>().enabled = true;
+        door.transform.GetComponent<Animator>().Play("door_anim");
         yield return new WaitForSeconds(1.5f);
+        MySceneManager.instance.LoadScene("MinigameEnd");
     }
 
     public bool checkAnswer(string answer, int index)

@@ -201,14 +201,4 @@ public class escaperoom1_5_player : MonoBehaviour
         imageButton.SetActive(true);
         doorsButton.SetActive(false);
     }
-
-    private void StartTransitionBetweenRooms()
-    {
-        //player.transform.GetComponent<PlayerBehavior>().enabled = false;
-    }
-
-    private void EndTransitionBetweenRooms()
-    {
-        //player.transform.GetComponent<PlayerBehavior>().enabled = true;
-    }
 }
