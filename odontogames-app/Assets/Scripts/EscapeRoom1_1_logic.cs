@@ -8,6 +8,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     public GameObject panel; // El panel de la UI
     public GameObject prefab; // El prefab que se va a generar
     public GameObject door;
+    public GameObject robot;
 
     // un array de las plataformas que se tienen que llenar
     public EscapeRoom1_1_AnswerBox[] platforms;
@@ -51,10 +52,6 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     public void CheckAnswer(string containerName)
     {
-        if (picturesSpawned > 1)
-        {
-            CamerasManager.camerasManagerInstance.SwapCamera(1);
-        }
         string imageType = currentImage.GetComponent<ShowImage>().GetTextureName();
         if (imageType == containerName) score++; else score--;
         Destroy(currentImage);
@@ -105,10 +102,10 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     private IEnumerator EndGameCoroutine()
     {
-        yield return new WaitForSeconds(1.5f);
-        CamerasManager.camerasManagerInstance.SwapCamera(1);
+        CamerasManager.camerasManagerInstance.SwapCamera(3);
+        while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded())
         SoundManager.instance.PlaySound(2);
-        StrapiComponent._instance.UpdatePlayerScore(score);
+        //StrapiComponent._instance.UpdatePlayerScore(score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         yield return new WaitForSeconds(1.5f);

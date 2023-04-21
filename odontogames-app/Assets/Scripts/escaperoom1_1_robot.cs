@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class escaperoom1_1_robot : MonoBehaviour
 {
-    int completedPlatforms = 0;
+    private int completedPlatforms = 0;
     public int requiredPlatforms;
     public GameObject target;
     public float moveSpeed;
 
-    public Animator animator;
+    private bool moving = false;
 
-    bool moving = false;
-
-    private void Start()
-    {
-        animator.enabled = false;
-    }
+    private bool gameHasEnded = false;
 
     public void AddCompletedPlatform()
     {
@@ -27,22 +22,22 @@ public class escaperoom1_1_robot : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
         if (moving)
             CrossToOtherSide();
 
-        if (transform.position == target.transform.position)
-            EndMinigameTransition();
+        if (transform.position == target.transform.position && !gameHasEnded)
+            EndMinigame();
 
     }
 
-    void CrossToOtherSide()
+    private void CrossToOtherSide()
     {
         transform.position = Vector3.MoveTowards(transform.position, target.transform.position, moveSpeed * Time.deltaTime);
     }
 
-    void StartMoving()
+    private void StartMoving()
     {
         StartCoroutine(StartMovingCoroutine());
     }
@@ -54,16 +49,13 @@ public class escaperoom1_1_robot : MonoBehaviour
         CamerasManager.camerasManagerInstance.SwapCamera(2);
     }
 
-    void EndMinigameTransition()
+    private void EndMinigame()
     {
-        StartCoroutine(EndMinigameTransitionCoroutine());
+        gameHasEnded = true;
     }
 
-    private IEnumerator EndMinigameTransitionCoroutine()
+    public bool GameHasEnded()
     {
-        CamerasManager.camerasManagerInstance.SwapCamera(3);
-        animator.enabled = true;
-        yield return new WaitForSeconds(1f);
-        MySceneManager.instance.LoadScene("MinigameEnd");
+        return gameHasEnded;
     }
 }

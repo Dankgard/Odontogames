@@ -40,6 +40,7 @@ public class escaperoom1_1_platform : MonoBehaviour
     }
     private IEnumerator WaitSecondsCoroutine(float seconds)
     {
+        CamerasManager.camerasManagerInstance.SwapCamera(1);
         yield return new WaitForSeconds(seconds);
         moving = true;
         currentPosition.y -= displacementSize;

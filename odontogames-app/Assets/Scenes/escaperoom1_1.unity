@@ -4027,7 +4027,6 @@ MonoBehaviour:
   requiredPlatforms: 5
   target: {fileID: 63844864}
   moveSpeed: 3
-  animator: {fileID: 814237478}
 --- !u!1 &1783537925
 GameObject:
   m_ObjectHideFlags: 0
@@ -4337,6 +4336,7 @@ MonoBehaviour:
   panel: {fileID: 1212609644}
   prefab: {fileID: 3043072723099356741, guid: d676846cf1e545a47aee9fe18c72441c, type: 3}
   door: {fileID: 814237476}
+  robot: {fileID: 1710329274}
   platforms:
   - {fileID: 4256015035279325396}
   - {fileID: 817269178}

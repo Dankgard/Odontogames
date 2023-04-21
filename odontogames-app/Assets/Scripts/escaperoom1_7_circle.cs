@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class escaperoom1_7_circle : MonoBehaviour
 {
     public GameObject letter;
-    public TextMesh hint;
-    public TextMesh question;
+    public TextMeshPro hint;
+    public TextMeshPro question;
     public GameObject questionsManager;
     public GameObject door;
+    public GameObject canvas;
 
     public InputField answerInput;
 
@@ -179,10 +181,11 @@ public class escaperoom1_7_circle : MonoBehaviour
 
     private IEnumerator EndGameCoroutine()
     {
+        canvas.SetActive(false);
         yield return new WaitForSeconds(1.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
-        //StrapiComponent._instance.UpdatePlayerScore(score);
+        StrapiComponent._instance.UpdatePlayerScore(score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         yield return new WaitForSeconds(1.5f);
