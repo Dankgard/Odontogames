@@ -38,6 +38,7 @@ public class Countdown : MonoBehaviour
         {
             end = true;
             Debug.Log("You are out of time.");
+            MySceneManager.instance.LoadScene("MinigameEnd");
         }
     }
 

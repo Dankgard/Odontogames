@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public int[] gamePoints;
+    public int currentMinigame = 1;
 
     private void Awake()
     {
@@ -29,5 +30,25 @@ public class GameManager : MonoBehaviour
     public void ReceiveGamePoints(int minigame, int points)
     {
         gamePoints[minigame] = points;
+    }
+
+    public void NextMinigame()
+    {
+        if(currentMinigame == 7)
+        {
+            EndGame();
+        }
+        else
+        {
+            currentMinigame++;
+            MySceneManager.instance.LoadScene("escaperoom1_" + currentMinigame);
+        }
+        
+    }
+
+    void EndGame()
+    {
+        // end of the game
+        MySceneManager.instance.LoadScene("MainMenu");
     }
 }
