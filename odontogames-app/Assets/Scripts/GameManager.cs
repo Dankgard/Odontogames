@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     public void ReceiveGamePoints(int minigame, int points)
     {
         gamePoints[minigame] = points;
+        if (StrapiComponent._instance != null) 
+            StrapiComponent._instance.UpdatePlayerScore(gamePoints[minigame]);
     }
 
     public void NextMinigame()

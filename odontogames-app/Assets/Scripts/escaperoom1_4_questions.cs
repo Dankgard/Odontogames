@@ -66,9 +66,10 @@ public class escaperoom1_4_questions : MonoBehaviour
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         yield return new WaitForSeconds(1.5f);
         SoundManager.instance.PlaySound(2);
-        //StrapiComponent._instance.UpdatePlayerScore(score);
+        GameManager.instance.ReceiveGamePoints(3, score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
+        SoundManager.instance.PlaySound(4);
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

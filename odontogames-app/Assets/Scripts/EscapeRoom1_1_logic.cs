@@ -105,9 +105,10 @@ public class EscapeRoom1_1_logic : MonoBehaviour
         CamerasManager.camerasManagerInstance.SwapCamera(3);
         while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded())
         SoundManager.instance.PlaySound(2);
-        //StrapiComponent._instance.UpdatePlayerScore(score);
+        GameManager.instance.ReceiveGamePoints(0, score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
+        SoundManager.instance.PlaySound(4);
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

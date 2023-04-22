@@ -130,6 +130,7 @@ public class escaperoom1_5_player : MonoBehaviour
 
         // Gradualmente incrementar la opacidad del color de la imagen del panel
         float timer = 0;
+        SoundManager.instance.PlaySound(4);
         while (timer < time)
         {
             float alpha = Mathf.Lerp(0, 1, timer / time);
@@ -153,7 +154,6 @@ public class escaperoom1_5_player : MonoBehaviour
             score--;
         }
 
-
         if (currentQuestion < questions.Length - 1)
         {
             currentQuestion++;
@@ -174,7 +174,7 @@ public class escaperoom1_5_player : MonoBehaviour
     {
         CamerasManager.camerasManagerInstance.SwapCamera(0);
         SoundManager.instance.PlaySound(2);
-        StrapiComponent._instance.UpdatePlayerScore(score);
+        GameManager.instance.ReceiveGamePoints(4, score);
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

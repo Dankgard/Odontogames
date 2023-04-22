@@ -152,9 +152,10 @@ public class escaperoom1_2_player : MonoBehaviour
     {
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
-        StrapiComponent._instance.UpdatePlayerScore(score);
+        GameManager.instance.ReceiveGamePoints(1, score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
+        SoundManager.instance.PlaySound(4);
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ea38ee392816c4589c9cf9338f6814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prompt: es zs
+  prompt: LENGUA VELLOSA
   separationVal: 35
   boxPrefab: {fileID: 7681844370500785536, guid: 7e5bed21392897941b1c6fd968544434, type: 3}
   door: {fileID: 8164442610440913056}

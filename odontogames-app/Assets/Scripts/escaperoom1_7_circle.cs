@@ -185,9 +185,10 @@ public class escaperoom1_7_circle : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
-        StrapiComponent._instance.UpdatePlayerScore(score);
+        GameManager.instance.ReceiveGamePoints(6, score);
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
+        SoundManager.instance.PlaySound(4);
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance;
-    AudioSource source;
-
     public AudioClip[] sounds;
 
-    Slider soundSlider;
+    private Slider soundSlider;
+    private AudioSource source;
 
     private void Awake()
     {
