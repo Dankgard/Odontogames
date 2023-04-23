@@ -13,8 +13,15 @@ using UnityEngine;
         public bool confirmed;
         public string firstname;
         public string lastname;
+        public int firstgamescore;
+        public int secondgamescore;
+        public int thirdgamescore;
+        public int fourthgamescore;
+        public int fifthgamescore;
+        public int sixthgamescore;
+        public int seventhgamescore;
+        public string userrole;
         public string group;
-        public int score;
 
         [SerializeField]
         private string createdAt;

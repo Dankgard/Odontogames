@@ -38,9 +38,9 @@ public class StrapiComponent : MonoBehaviour
     [Tooltip("The secret key used for creating the JWT on your Strapi server. This is used to check that the stored JWT is valid. The secret can be found in your Strapi installation, at 'strapi/extensions/users-permissions/config/jwt.js'")]
     public string JWTSecret;
 
-    public StrapiUser AuthenticatedUser;
-    public bool IsAuthenticated = false;
-    public string ErrorMessage;
+    private StrapiUser authenticatedUser;
+    private bool IsAuthenticated = false;
+    private string ErrorMessage;
 
     public string TEACHER_SECRET_PASSWORD = "1234";
     private bool userIsTeacher = false;
@@ -51,13 +51,11 @@ public class StrapiComponent : MonoBehaviour
     private StrapiUser[] users = null;
     private StrapiTeamsData[] teams = null;
 
-    //private StrapiRole[] roles;
-
-    public int profesorRoleID = 10;
-    public int studentRoleID = 11;
+    public int profesorRoleID;
+    public int studentRoleID;
     private StrapiUserTeam strapiUserTeam;
 
-    // Singleton
+    // Instancia
     public static StrapiComponent _instance;
 
     protected virtual void Awake()
@@ -185,17 +183,17 @@ public class StrapiComponent : MonoBehaviour
     {
         yield return GetListOfUsersFromServerCoroutine(endpoint);
         Document document = new Document();
-        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "prueba.pdf");
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "prueba.pdf");
         PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.OpenOrCreate));
         document.Open();
 
-        for (int i = 0; i < users.Length; i++)
-        {
-            string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
-                " " + users[i].username + " " + users[i].email + ": " + users[i].score + " puntos.\n";
-            Paragraph paragraph = new Paragraph(line);
-            document.Add(paragraph);
-        }        
+        //for (int i = 0; i < users.Length; i++)
+        //{
+        //    string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
+        //        " " + users[i].username + " " + users[i].email + ": " + users[i].score + " puntos.\n";
+        //    Paragraph paragraph = new Paragraph(line);
+        //    document.Add(paragraph);
+        //}        
 
         document.Close();
     }
@@ -228,7 +226,8 @@ public class StrapiComponent : MonoBehaviour
             new JProperty("email", email),
             new JProperty("password", password),
             new JProperty("firstname", name),
-            new JProperty("lastname", surname)
+            new JProperty("lastname", surname),
+            new JProperty("userrole", "estudiante")
         );
 
         string jsonString = jsonObj.ToString();
@@ -247,6 +246,7 @@ public class StrapiComponent : MonoBehaviour
 
         var jsonObject = new JObject();
         jsonObject.Add("role", new JValue(roleID));
+        jsonObject.Add("userrole", "profesor");
 
         string jsonString = jsonObject.ToString();
 
@@ -274,29 +274,29 @@ public class StrapiComponent : MonoBehaviour
         OnAuthStarted?.Invoke();
         JObject jsonObject = new JObject();
 
-        if (!string.IsNullOrEmpty(username) && username != AuthenticatedUser.username)
+        if (!string.IsNullOrEmpty(username) && username != authenticatedUser.username)
         {
             jsonObject.Add("username", username);
         }
 
-        if (!string.IsNullOrEmpty(email) && email != AuthenticatedUser.email)
+        if (!string.IsNullOrEmpty(email) && email != authenticatedUser.email)
         {
             jsonObject.Add("email", email);
         }
 
-        if (!string.IsNullOrEmpty(name) && name != AuthenticatedUser.firstname)
+        if (!string.IsNullOrEmpty(name) && name != authenticatedUser.firstname)
         {
             jsonObject.Add("firstname", name);
         }
 
-        if (!string.IsNullOrEmpty(surname) && surname != AuthenticatedUser.lastname)
+        if (!string.IsNullOrEmpty(surname) && surname != authenticatedUser.lastname)
         {
             jsonObject.Add("lastname", surname);
         }
 
         if (jsonObject.Count > 0)
         {
-            string id = AuthenticatedUser.id.ToString();
+            string id = authenticatedUser.id.ToString();
             string endpoint = $"api/users/{id}";
 
             string jsonString = JsonConvert.SerializeObject(jsonObject);
@@ -325,13 +325,13 @@ public class StrapiComponent : MonoBehaviour
             int userIndex = Array.FindIndex(users, user => user.id == memberId);
             if (userIndex >= 0)
             {
-                score += users[userIndex].score;
+                score += GetUserTotalPoints(userIndex);
             }
         }
 
         var teamObject = new JObject(
             new JProperty("teamname", groupName),
-            new JProperty("creator", AuthenticatedUser.username),
+            new JProperty("creator", authenticatedUser.username),
             new JProperty("numplayers", new JValue(members.Count)),
             new JProperty("teamscore", new JValue(score)),
             new JProperty("members", JArray.FromObject(members)));
@@ -355,7 +355,7 @@ public class StrapiComponent : MonoBehaviour
             int userId = members[i];
             string endpoint = $"api/users/{userId}";
 
-            if (userId == AuthenticatedUser.id)
+            if (userId == authenticatedUser.id)
             {
                 StartCoroutine(PutRequest(endpoint, userString, () => StartCoroutine(GetUpdatedUserData(endpoint))));
             }
@@ -385,8 +385,8 @@ public class StrapiComponent : MonoBehaviour
             int id = users[i].id;
             if (members.Contains(id))
             {
-                if (!addingPlayers) newScore -= users[i].score;
-                else newScore += users[i].score;
+                if (!addingPlayers) newScore -= GetUserTotalPoints(id);
+                else newScore += GetUserTotalPoints(id);
                 copy.Remove(id);
             }
             if (copy.Count <= 0)
@@ -503,7 +503,7 @@ public class StrapiComponent : MonoBehaviour
         yield return PutRequest(endpoint, jsonString);
         yield return GetUpdatedUserData(endpoint);
 
-        if (AuthenticatedUser.team != null)
+        if (authenticatedUser.team != null)
         {
             Debug.Log("Updating player team");
             // TODO metodo para actualizar la puntuacion del grupo strapi
@@ -516,7 +516,7 @@ public class StrapiComponent : MonoBehaviour
     public virtual void DeleteAccount()
     {
         OnAuthStarted?.Invoke();
-        string endpoint = $"api/users/{AuthenticatedUser.id}";
+        string endpoint = $"api/users/{authenticatedUser.id}";
         StartCoroutine(DeleteRequest(endpoint));
     }
     public virtual void DeleteUserAccount(int id)
@@ -561,13 +561,17 @@ public class StrapiComponent : MonoBehaviour
     // authorization type Bearer and the user's JWT
     private void OnAuthSuccessHandler(AuthResponse authResponse)
     {
-        AuthenticatedUser = authResponse.user;
+        authenticatedUser = authResponse.user;
         userJWT = authResponse.jwt;
         userID = authResponse.user.id.ToString();
         IsAuthenticated = true;
+        if (authenticatedUser.userrole == "profesor")
+        {
+            userIsTeacher = true;
+        }
 
         RestClient.DefaultRequestHeaders["Authorization"] = "Bearer " + userJWT;
-        Debug.Log($"Successfully authenticated. Welcome {AuthenticatedUser.username}");
+        Debug.Log($"Successfully authenticated. Welcome {authenticatedUser.username}");
         Debug.Log(userJWT);
 
         StartCoroutine(GetUpdatedUserData($"api/users/{userID}"));
@@ -668,13 +672,13 @@ public class StrapiComponent : MonoBehaviour
             yield break;
         }
 
-        AuthenticatedUser = null;
+        authenticatedUser = null;
         string url = BaseURL + endpoint;
 
         OnAuthStarted?.Invoke();
         RestClient.Get<StrapiUser>(url).Then(userResponse =>
         {
-            AuthenticatedUser = userResponse;
+            authenticatedUser = userResponse;
             Debug.Log("User updated");
         }).Catch(err =>
         {
@@ -682,7 +686,7 @@ public class StrapiComponent : MonoBehaviour
             Debug.Log($"Authentication Error: {err}");
         });
 
-        yield return new WaitUntil(() => AuthenticatedUser != null);
+        yield return new WaitUntil(() => authenticatedUser != null);
     }
 
     private IEnumerator GetUsersRequest(string endpoint)
@@ -798,27 +802,27 @@ public class StrapiComponent : MonoBehaviour
     #region Getter_functions
     public String GetUsername()
     {
-        return AuthenticatedUser.username;
+        return authenticatedUser.username;
     }
 
     public String GetEmail()
     {
-        return AuthenticatedUser.email;
+        return authenticatedUser.email;
     }
 
     public String GetPassword()
     {
-        return AuthenticatedUser.password;
+        return authenticatedUser.password;
     }
 
     public String GetName()
     {
-        return AuthenticatedUser.firstname;
+        return authenticatedUser.firstname;
     }
 
     public String GetSurname()
     {
-        return AuthenticatedUser.lastname;
+        return authenticatedUser.lastname;
     }
 
     public bool UserIsTeacher()
@@ -857,4 +861,15 @@ public class StrapiComponent : MonoBehaviour
         return team;
     }
     #endregion
+
+    private int GetUserTotalPoints(int id)
+    {
+        return users[id].firstgamescore + users[id].secondgamescore + users[id].thirdgamescore + users[id].fourthgamescore + users[id].fifthgamescore
+            + users[id].sixthgamescore + users[id].seventhgamescore;
+    }
+
+    public StrapiUser GetCurrentUser()
+    {
+        return authenticatedUser;
+    }
 }
