@@ -130,7 +130,9 @@ public class GameManager : MonoBehaviour
 
     public int GetPoints()
     {
-        return gamePoints[currentMinigame].correctAnswers;
+        if (gamePoints.ContainsKey(currentMinigame))
+            return gamePoints[currentMinigame].correctAnswers;
+        else return 0;
     }
 
     public Minigame_Score GetMinigameScore()

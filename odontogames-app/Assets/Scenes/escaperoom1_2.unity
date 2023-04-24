@@ -3968,6 +3968,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 938680928}
     m_Modifications:
+    - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+      propertyPath: timeLeft
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
       value: CountdownBackground

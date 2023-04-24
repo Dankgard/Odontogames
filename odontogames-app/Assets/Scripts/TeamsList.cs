@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using StrapiForUnity;
-using System.Collections.Generic;
 
 public class TeamsList : MonoBehaviour
 {
@@ -95,11 +94,11 @@ public class TeamsList : MonoBehaviour
         currentTeamIndex= teamID.IndexOf(button.gameObject);
 
         StrapiUserTeam team = teams[currentTeamIndex].attributes;
-        teamPanel.transform.GetChild(0).GetComponent<Text>().text = "Team name: " + team.teamname;
-        teamPanel.transform.GetChild(1).GetComponent<Text>().text = "Creator: " + team.creator;
+        teamPanel.transform.GetChild(0).GetComponent<Text>().text = "Team name: " + team.teamname.ToString();
+        teamPanel.transform.GetChild(1).GetComponent<Text>().text = "Creator: " + team.creator.ToString();
         teamPanel.transform.GetChild(2).GetComponent<Text>().text = "Score: " + team.teamscore.ToString();
         teamPanel.transform.GetChild(3).GetComponent<Text>().text = "Players: " + team.numplayers.ToString();
-        teamPanel.transform.GetChild(4).GetComponent<Text>().text = "Joined: " + team.CreatedAt();
+        teamPanel.transform.GetChild(4).GetComponent<Text>().text = "Created: " + team.CreatedAt().ToString();
         teamPanel.SetActive(true);
     }
 
@@ -273,7 +272,7 @@ public class TeamsList : MonoBehaviour
             newTeamPanelOne.SetActive(false);
             newTeamPanelTwo.SetActive(true);
 
-            users = StrapiComponent._instance.GetUsers();
+            users = StrapiComponent._instance.GetFreeUsers();
             userID = new GameObject[users.Length];
 
             for (int i = 0; i < users.Length; i++)

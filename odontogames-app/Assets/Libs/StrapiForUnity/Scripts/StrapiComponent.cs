@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.IO;
+using System.Linq;
 
 public class StrapiComponent : MonoBehaviour
 {
@@ -182,17 +183,58 @@ public class StrapiComponent : MonoBehaviour
     {
         yield return GetListOfUsersFromServerCoroutine(endpoint);
         Document document = new Document();
-        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "prueba.pdf");
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "notas.pdf");
         PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.OpenOrCreate));
         document.Open();
 
-        //for (int i = 0; i < users.Length; i++)
-        //{
-        //    string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
-        //        " " + users[i].username + " " + users[i].email + ": " + users[i].score + " puntos.\n";
-        //    Paragraph paragraph = new Paragraph(line);
-        //    document.Add(paragraph);
-        //}        
+        iTextSharp.text.Font font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
+        for (int i = 0; i < users.Length; i++)
+        {
+            string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
+                " " + users[i].username + " " + users[i].email + ".\n";
+
+            // Crea un objeto Chunk con el texto en negrita y la fuente Arial
+            Chunk chunk = new Chunk(line, font);
+
+            // Crea un objeto Paragraph y agrega el Chunk
+            Paragraph paragraph = new Paragraph(chunk);
+            document.Add(paragraph);
+
+            // Crea un objeto Chunk para el texto en negrita
+            chunk = new Chunk("Bloque 1.\n", font);
+
+            // Crea un objeto Paragraph y agrega el Chunk
+            paragraph = new Paragraph(chunk);
+            document.Add(paragraph);
+
+            line = "Minijuego 1: " + users[i].firstgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 2: " + users[i].secondgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 3: " + users[i].thirdgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 4: " + users[i].fourthgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 5: " + users[i].fifthgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 6: " + users[i].sixthgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+
+            line = "Minijuego 7: " + users[i].seventhgamescore + ".\n";
+            paragraph = new Paragraph(line);
+            document.Add(paragraph);
+        }
 
         document.Close();
     }
@@ -833,6 +875,12 @@ public class StrapiComponent : MonoBehaviour
     public StrapiUser[] GetUsers()
     {
         return users;
+    }
+
+    public StrapiUser[] GetFreeUsers()
+    {
+        StrapiUser[] freeUsers = users.Where(u => u.group == "None").ToArray();
+        return freeUsers;
     }
 
     public StrapiTeamsData[] GetTeams()
