@@ -12,18 +12,8 @@ public class CamerasManager : MonoBehaviour
     private void Start()
     {
         camerasManagerInstance = this;
-        //if (camerasManagerInstance == null)
-        //{
-        //    camerasManagerInstance = this;
-        //    DontDestroyOnLoad(gameObject);
-        //}
-        //else if (camerasManagerInstance != null)
-        //{
-        //    Destroy(gameObject);
-        //}
 
         currentCameraIndex = 0;
-
         // Deactivate all cameras then enable the current index camera
         for (int i = 0; i < cameras.Length; i++)
         {

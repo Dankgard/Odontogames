@@ -141,3 +141,5 @@ MonoBehaviour:
   dragSpeed: 30
   shootForce: 1000
   useRigidbody: 1
+  throwable: 1
+  resetPositionOnIdle: 1

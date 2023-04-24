@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Libs/StrapiForUnity/Example Scenes/LoginOrRegisterForm.unity
-    guid: b6900d062bfab53448234a3e39e967f3
   - enabled: 1
     path: Assets/Scenes/LoginOrRegister.unity
     guid: 15115ef807b8a8346b5cbb983ff2bac9
@@ -17,9 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GlobalUserList.unity
     guid: 4e070b25ab68cbc478f3413d0cc22709
-  - enabled: 1
-    path: Assets/Scenes/CreateNewGroup.unity
-    guid: 31116ad5fca1a87478216d5b03fd61c5
   - enabled: 1
     path: Assets/Scenes/escaperoom1_1.unity
     guid: 2a0d935691f66c04aabbe3732986efe6

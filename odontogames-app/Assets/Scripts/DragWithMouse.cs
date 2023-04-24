@@ -11,10 +11,33 @@ public class DragWithMouse : MonoBehaviour
     public bool throwable = true;
     private Rigidbody rb;
 
-    private void Awake()
+    public bool resetPositionOnIdle = false;
+
+    private Vector3 posIni;
+    private float timeLeft = 10.0f;
+
+    private void Start()
     {
         if (useRigidbody)
             rb = gameObject.GetComponent<Rigidbody>();
+        posIni = transform.position;
+    }
+
+    private void Update()
+    {
+        if (resetPositionOnIdle)
+            // Si el temporizador se ha agotado
+            if (timeLeft <= 0)
+            {
+                // Pone el objeto en su posición original
+                transform.position = posIni;
+                timeLeft = 10.0f;
+            }
+            else
+            {
+                // Disminuye el tiempo restante
+                timeLeft -= Time.deltaTime;
+            }
     }
 
     private void OnMouseDown()

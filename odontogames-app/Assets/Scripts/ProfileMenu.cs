@@ -45,7 +45,11 @@ public class ProfileMenu : MonoBehaviour
         headerText.text = "Succesfully deleted account. App will now close to submit changes.";
         StrapiComponent._instance.DeleteAccount();
 
-        Invoke("CloseApp", 3.0f);
+        Invoke("CloseApp", 5.0f);
+    }
+    public void CloseApp()
+    {
+        Application.Quit();
     }
 
     public void submitRequest()
@@ -104,11 +108,6 @@ public class ProfileMenu : MonoBehaviour
         scores.transform.GetChild(6).GetComponent<TextMeshProUGUI>().text += score.ToString() + " puntos";
 
         scoresMenu.SetActive(true);
-    }
-
-    public void CloseApp()
-    {
-        Application.Quit();
     }
 
     public void backToMainMenu()

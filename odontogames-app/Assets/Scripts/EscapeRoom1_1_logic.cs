@@ -23,6 +23,7 @@ public class escapeRoom1_1_logic : MonoBehaviour
 
     private int picturesSpawned = 0;
     private bool gameEnded = false;
+    private bool lostByTime = false;
 
     private void Start()
     {
@@ -35,9 +36,16 @@ public class escapeRoom1_1_logic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if ((picturesSpawned <= 0 || countdown.GetTimeLeft() <= 0.0f) && !gameEnded)
+        if (picturesSpawned <= 0 && !gameEnded)
         {
             gameEnded = true;
+            EndGame();
+        }
+
+        if (countdown.GetTimeLeft() <= 0.0f && !gameEnded)
+        {
+            gameEnded = true;
+            lostByTime = true;
             EndGame();
         }
 
@@ -112,8 +120,10 @@ public class escapeRoom1_1_logic : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         CamerasManager.camerasManagerInstance.SwapCamera(3);
-        if (countdown.GetTimeLeft() > 0.0f)
-            while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded())
+        //if (!lostByTime)
+        //{
+        //    while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded());
+        //}
         SoundManager.instance.PlaySound(2);
 
         for (int i = 0; i < picturesSpawned; i++)

@@ -79,7 +79,6 @@ public class escaperoom1_5_player : MonoBehaviour
             }
         }
 
-        fadeToBlackPanel.SetActive(false);
     }
 
     void Start()
@@ -100,6 +99,7 @@ public class escaperoom1_5_player : MonoBehaviour
         // Child 0 of this GO must always be an empty GO
         room.transform.parent = transform.GetChild(0);
 
+        fadeToBlackPanel.SetActive(false);
         doorsButton.SetActive(false);
     }
 
