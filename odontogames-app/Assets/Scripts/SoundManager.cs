@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,7 +28,14 @@ public class SoundManager : MonoBehaviour
         }
 
         source = GetComponent<AudioSource>();
-        soundSlider = GameObject.FindWithTag("sound").GetComponent<Slider>();
+        try
+        {
+            soundSlider = GameObject.FindWithTag("sound").GetComponent<Slider>();
+        }
+        catch (NullReferenceException e)
+        {
+            
+        }
 
     }
 

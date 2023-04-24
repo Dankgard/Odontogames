@@ -7,7 +7,6 @@ using Proyecto26;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.IO;
@@ -369,7 +368,9 @@ public class StrapiComponent : MonoBehaviour
     }
 
     public IEnumerator UpdateStrapiUserTeamCoroutine(int teamID, List<int> members, bool addingPlayers) {
-        string endpoint = $"api/teams/{teamID}";
+        string endpoint = $"api/teams/{teamID}?populate=members";
+        Debug.Log("AAAAAAAAAAAAAAA");
+        yield return GetGroupDataRequest(endpoint);
 
         int newGroupSize = strapiUserTeam.numplayers;
         if (!addingPlayers) newGroupSize -= members.Count;
@@ -382,11 +383,12 @@ public class StrapiComponent : MonoBehaviour
         List<int> copy = new List<int>(members);
         for (int i = 0; i < users.Length; i++)
         {
+            Debug.Log(users[i].id);
             int id = users[i].id;
             if (members.Contains(id))
             {
-                if (!addingPlayers) newScore -= GetUserTotalPoints(id);
-                else newScore += GetUserTotalPoints(id);
+                if (!addingPlayers) newScore -= GetUserTotalPoints(users[i]);
+                else newScore += GetUserTotalPoints(users[i]);
                 copy.Remove(id);
             }
             if (copy.Count <= 0)
@@ -482,7 +484,7 @@ public class StrapiComponent : MonoBehaviour
 
     public IEnumerator GetListOfTeamsFromServerCoroutine()
     {
-        string endpoint = "api/teams";
+        string endpoint = "api/teams?populate=members";
         yield return StartCoroutine(GetStrapiUserTeamsFromServer(endpoint));
     }
 
@@ -532,8 +534,7 @@ public class StrapiComponent : MonoBehaviour
         string endpoint = $"api/teams/{id}";
 
         StrapiUserTeam team = GetGroupByID(id);
-        Debug.Log(team.teamname);
-        Debug.Log(team.members);
+
         for (int i = 0; i < team.members.data.Length; i++)
         {
             int userId = team.members.data[i].id;
@@ -763,7 +764,6 @@ public class StrapiComponent : MonoBehaviour
 
     private IEnumerator GetGroupDataRequest(string endpoint)
     {
-        Debug.Log(endpoint);
         strapiUserTeam = null;
         string url = BaseURL + endpoint;
 
@@ -851,7 +851,7 @@ public class StrapiComponent : MonoBehaviour
 
         for (int i = 0; i < teams.Length; i++)
         {
-            if (teams[i].attributes.id == id)
+            if (teams[i].id == id.ToString())
             {
                 team = teams[i].attributes;
                 break;
@@ -862,10 +862,16 @@ public class StrapiComponent : MonoBehaviour
     }
     #endregion
 
-    private int GetUserTotalPoints(int id)
+    private int GetUserTotalPoints(int userID)
     {
-        return users[id].firstgamescore + users[id].secondgamescore + users[id].thirdgamescore + users[id].fourthgamescore + users[id].fifthgamescore
-            + users[id].sixthgamescore + users[id].seventhgamescore;
+        return users[userID].firstgamescore + users[userID].secondgamescore + users[userID].thirdgamescore + users[userID].fourthgamescore + users[userID].fifthgamescore
+            + users[userID].sixthgamescore + users[userID].seventhgamescore;
+    }
+
+    private int GetUserTotalPoints(StrapiUser user)
+    {
+        return user.firstgamescore + user.secondgamescore + user.thirdgamescore + user.fourthgamescore + user.fifthgamescore
+            + user.sixthgamescore + user.seventhgamescore;
     }
 
     public StrapiUser GetCurrentUser()

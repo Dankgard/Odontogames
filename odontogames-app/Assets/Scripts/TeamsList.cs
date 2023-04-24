@@ -204,7 +204,7 @@ public class TeamsList : MonoBehaviour
             GameObject user = Instantiate(userPrefab, new Vector3(0, usersViewport.transform.position.y - 50 * i, 0), Quaternion.identity, usersViewport.transform);
             user.transform.GetChild(0).GetComponent<Text>().text = freeUsers[i].username;
             user.transform.GetChild(1).GetComponent<Text>().text = freeUsers[i].firstname;
-            user.transform.parent = addTeamPlayers.transform.GetChild(3).GetChild(0).GetChild(0);
+            user.transform.parent = addTeamPlayers.transform.GetChild(1).GetChild(0).GetChild(0);
             userID[i] = user;
         }
     }
