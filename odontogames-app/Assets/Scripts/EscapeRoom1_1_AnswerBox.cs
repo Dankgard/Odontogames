@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 
-public class EscapeRoom1_1_AnswerBox : MonoBehaviour
+public class escapeRoom1_1_AnswerBox : MonoBehaviour
 {
     public string name;
     public GameObject platform;

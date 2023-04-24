@@ -9,6 +9,7 @@ public class escaperoom1_2_player : MonoBehaviour
 
     public Light[] lights;
     public Material material;
+    public Countdown countdown;
 
     public Texture[] questions;
     public GameObject[] answers;
@@ -17,7 +18,6 @@ public class escaperoom1_2_player : MonoBehaviour
     public Texture[] textures;
 
     private int currentQuestion = 0;
-    private int score = 0;
 
     private List<int> indexes;
 
@@ -49,9 +49,9 @@ public class escaperoom1_2_player : MonoBehaviour
         GetComponent<Renderer>().material.mainTexture = questions[currentQuestion];
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (currentQuestion == questions.Length && !finishedGame)
+        if ((currentQuestion == questions.Length || countdown.GetTimeLeft() <= 0.0f) && !finishedGame)
         {
             finishedGame = true;
             EndGame();
@@ -65,14 +65,13 @@ public class escaperoom1_2_player : MonoBehaviour
             // We update the player's texture
             GetComponent<Renderer>().material.mainTexture = questions[currentQuestion];
             currentQuestion++;
-            score++;
+            GameManager.instance.CorrectAnswer();
             TurnLightOff();
             Destroy(col.gameObject);
         }
         else if (col.gameObject.tag != "wall")
         {
-            // penalizar al jugador porque se equivoco de imagen
-            score--;
+            GameManager.instance.WrongAnswer();
         }
     }
 
@@ -152,7 +151,12 @@ public class escaperoom1_2_player : MonoBehaviour
     {
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(1, score);
+        
+        for (int i = 0; i < questions.Length - currentQuestion; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         SoundManager.instance.PlaySound(4);

@@ -12,6 +12,7 @@ public class escaperoom1_5_player : MonoBehaviour
 
     public GameObject room;
     public GameObject fadeToBlackPanel;
+    public Countdown countdown;
 
     public Texture[] textures;
 
@@ -19,13 +20,13 @@ public class escaperoom1_5_player : MonoBehaviour
 
     public GameObject doorsButton, textButton, imageButton;
 
-    private int score = 0;
-
     private int currentQuestion = 0;
 
     private string[] questions;
     private string[] answers;
     private string[] correctAnswer;
+
+    private bool gameEnded = false;
 
     void Awake()
     {
@@ -102,6 +103,15 @@ public class escaperoom1_5_player : MonoBehaviour
         doorsButton.SetActive(false);
     }
 
+    private void FixedUpdate()
+    {
+        if (countdown.GetTimeLeft() <= 0.0f && !gameEnded)
+        {
+            gameEnded = true;
+            EndGame();
+        }
+    }
+
     private void SetRoom(int currentIndex)
     {
         StartCoroutine(SetRoomCoroutine(currentIndex));
@@ -147,11 +157,11 @@ public class escaperoom1_5_player : MonoBehaviour
         if (answer == answers[currentQuestion])
         {
             Debug.Log("Correcto");
-            score++;
+            GameManager.instance.CorrectAnswer();
         }
         else {
             Debug.Log("Incorrecto");
-            score--;
+            GameManager.instance.WrongAnswer();
         }
 
         if (currentQuestion < questions.Length - 1)
@@ -174,7 +184,13 @@ public class escaperoom1_5_player : MonoBehaviour
     {
         CamerasManager.camerasManagerInstance.SwapCamera(0);
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(4, score);
+
+        for (int i = 0; i < (questions.Length - 1) - currentQuestion; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
+
         yield return new WaitForSeconds(1.5f);
         MySceneManager.instance.LoadScene("MinigameEnd");
     }

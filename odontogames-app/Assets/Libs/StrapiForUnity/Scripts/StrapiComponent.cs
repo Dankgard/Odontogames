@@ -486,15 +486,15 @@ public class StrapiComponent : MonoBehaviour
         yield return StartCoroutine(GetStrapiUserTeamsFromServer(endpoint));
     }
 
-    public void UpdatePlayerScore(int score)
+    public void UpdatePlayerScore(GameManager.Minigame_Score score, string minigame)
     {
-        StartCoroutine(UpdatePlayerScoreCoroutine(score));
+        StartCoroutine(UpdatePlayerScoreCoroutine(score, minigame));
     }
 
-    private IEnumerator UpdatePlayerScoreCoroutine(int score)
+    private IEnumerator UpdatePlayerScoreCoroutine(GameManager.Minigame_Score score, string minigame)
     {
         var jsonObject = new JObject(
-            new JProperty("score", score)
+            new JProperty(minigame, (score.correctAnswers - score.wrongAnswers + score.bonusPoints))
         );
         var jsonString = jsonObject.ToString();
 

@@ -1515,6 +1515,7 @@ MonoBehaviour:
   - {fileID: 62344590}
   - {fileID: 160504932}
   material: {fileID: 2100000, guid: 4bbd996061850e044a8c2b98266d4bf0, type: 2}
+  countdown: {fileID: 1496557093}
   questions:
   - {fileID: 2800000, guid: 64dc67fe0d09ec0428182ea03acf40c0, type: 3}
   - {fileID: 2800000, guid: 41d78fbe1b66fef4ea3ca5a4cfce3135, type: 3}
@@ -2706,10 +2707,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 253921179}
-    - target: {fileID: 1737719312188597063, guid: a401cae67abafec45827d2f2638f2182, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PlayOneShot
-      objectReference: {fileID: 0}
     - target: {fileID: 5438133190789216159, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2742,10 +2739,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 253921179}
-    - target: {fileID: 5438133191161329648, guid: a401cae67abafec45827d2f2638f2182, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PlayOneShot
-      objectReference: {fileID: 0}
     - target: {fileID: 5438133191161329651, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2774,10 +2767,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 253921179}
-    - target: {fileID: 6637196253055611249, guid: a401cae67abafec45827d2f2638f2182, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PlayOneShot
-      objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611254, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_Name
       value: PauseMenu
@@ -2848,11 +2837,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3979,10 +3968,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 938680928}
     m_Modifications:
-    - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
-      propertyPath: timeLeft
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
       value: CountdownBackground
@@ -4078,6 +4063,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1706903997546584427, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
   m_PrefabInstance: {fileID: 1496557091}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1496557093 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+  m_PrefabInstance: {fileID: 1496557091}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90d2712f3cd245458e22d95d714d7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1511481611
 PrefabInstance:
   m_ObjectHideFlags: 0

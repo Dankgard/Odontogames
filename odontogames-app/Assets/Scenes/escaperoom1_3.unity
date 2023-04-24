@@ -538,7 +538,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: timeLeft
-      value: 5
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
@@ -630,6 +630,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+--- !u!114 &782183559 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+  m_PrefabInstance: {fileID: 782183558}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90d2712f3cd245458e22d95d714d7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &834031341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1365,11 +1376,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1450,6 +1461,7 @@ MonoBehaviour:
   - Staphilococcus Aureus
   canvas: {fileID: 130190790}
   door: {fileID: 8164442610466070804}
+  countdown: {fileID: 782183559}
   answerInputField: {fileID: 1595948818}
   feedbackText: {fileID: 834031343}
   questionText: {fileID: 2100426655}

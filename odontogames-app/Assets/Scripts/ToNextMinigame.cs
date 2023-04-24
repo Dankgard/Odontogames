@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class ToNextMinigame : MonoBehaviour
 {
-    Button button;
+    private Button button;
 
-    void Awake()
+    void Start()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(NextMinigame);

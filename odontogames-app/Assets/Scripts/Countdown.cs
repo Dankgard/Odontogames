@@ -5,16 +5,15 @@ using UnityEngine.UI;
 
 public class Countdown : MonoBehaviour
 {
-    Text countdownText;
+    private Text countdownText;
     public float timeLeft = 60.0f;
-    bool end = false;
 
-    void Awake()
+    private void Awake()
     {
         countdownText = GetComponent<Text>();
     }
 
-    void Update()
+    private void Update()
     {
         timeLeft -= Time.deltaTime;
 
@@ -24,7 +23,6 @@ public class Countdown : MonoBehaviour
         if(timeLeft <= 0)
         {
             countdownText.text = "0:00";
-            OutOfTime();
         }
         else
         {
@@ -32,14 +30,18 @@ public class Countdown : MonoBehaviour
         }
     }
 
-    void OutOfTime()
+    public float GetTimeLeft()
     {
-        if(!end)
-        {
-            end = true;
-            Debug.Log("You are out of time.");
-            MySceneManager.instance.LoadScene("MinigameEnd");
-        }
+        return timeLeft;
     }
 
+    public int GetBonusPoints()
+    {
+        int extra = 0;
+        if (timeLeft >= 240) extra = 3;
+        else if (timeLeft >= 120) extra = 2;
+        else if (timeLeft >= 60) extra = 1;
+
+        return extra;
+    }
 }

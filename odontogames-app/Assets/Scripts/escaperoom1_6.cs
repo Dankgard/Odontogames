@@ -11,6 +11,7 @@ public class escaperoom1_6 : MonoBehaviour
     public int separationVal = 35;
     public GameObject boxPrefab;
     public GameObject door;
+    public Countdown countdown;
 
     private string[] words;
     private List<GameObject> boxes;
@@ -18,7 +19,6 @@ public class escaperoom1_6 : MonoBehaviour
     public Material correctAnswer;
     public Material wrongAnswer;
 
-    private int score;
     private bool gameEnded = false;
     private bool doorTransition = false;
 
@@ -77,7 +77,7 @@ public class escaperoom1_6 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (boxes.Count <= 0 && !gameEnded && !doorTransition)
+        if ((boxes.Count <= 0 || countdown.GetTimeLeft() <= 0.0f) && !gameEnded && !doorTransition)
         {
             gameEnded = true;
             EndGame();
@@ -94,7 +94,13 @@ public class escaperoom1_6 : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(5, score);
+
+        for (int i = 0; i < boxes.Count; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
+
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         SoundManager.instance.PlaySound(4);
@@ -123,7 +129,7 @@ public class escaperoom1_6 : MonoBehaviour
                 boxes.Remove(sortedBoxes[boxIndex]);
                 sortedBoxes.RemoveAt(boxIndex);
                 answer = answer.Remove(index, 1);
-                score++;
+                GameManager.instance.CorrectAnswer();
                 n++;
             }
             else
@@ -131,7 +137,7 @@ public class escaperoom1_6 : MonoBehaviour
                 sortedBoxes[boxIndex].GetComponent<Renderer>().material = wrongAnswer;
                 index++;
                 boxIndex++;
-                score--;
+                GameManager.instance.WrongAnswer();
             }
         }
         StartCoroutine(CorrectAnswer(n));

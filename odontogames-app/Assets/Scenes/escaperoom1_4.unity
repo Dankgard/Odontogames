@@ -420,11 +420,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -13
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -475,6 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   door: {fileID: 8164442610923308396}
+  countdown: {fileID: 2057746694}
   question:
   - "1. De las siguientes opciones, \xBFCu\xE1l no se corresponde con la candidiasis
     eritematosa? "
@@ -2924,7 +2925,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: timeLeft
-      value: 5
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
@@ -3016,6 +3017,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+--- !u!114 &2057746694 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+  m_PrefabInstance: {fileID: 2057746693}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90d2712f3cd245458e22d95d714d7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2124740611
 PrefabInstance:
   m_ObjectHideFlags: 0

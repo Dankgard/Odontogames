@@ -168,7 +168,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: timeLeft
-      value: 5
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
@@ -260,6 +260,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+--- !u!114 &182925825 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+  m_PrefabInstance: {fileID: 182925824}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90d2712f3cd245458e22d95d714d7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &207446752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -370,6 +381,7 @@ MonoBehaviour:
   separationVal: 35
   boxPrefab: {fileID: 7681844370500785536, guid: 7e5bed21392897941b1c6fd968544434, type: 3}
   door: {fileID: 8164442610440913056}
+  countdown: {fileID: 182925825}
   correctAnswer: {fileID: 2100000, guid: 4bbd996061850e044a8c2b98266d4bf0, type: 2}
   wrongAnswer: {fileID: 2100000, guid: 7d34a63a0b2176e42829647d2de5ae1a, type: 2}
   bars: {fileID: 110570512}
@@ -759,11 +771,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5.000122
+      value: -16
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2087,7 +2099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -194, y: 202}
+  m_AnchoredPosition: {x: -194, y: 173.99997}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2055382484

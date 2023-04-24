@@ -12,6 +12,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
 
     public GameObject canvas;
     public GameObject door;
+    public Countdown countdown;
 
     public InputField answerInputField;
     public Text feedbackText;
@@ -22,7 +23,6 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
     private string wrongAnswerMessage;
     private string correctAnswerMessage;
 
-    private int score = 0;
     private bool endgame = false;
 
     void Start()
@@ -40,6 +40,15 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
         index = 0;
 
         questionText.text = questions[index];
+    }
+
+    private void FixedUpdate()
+    {
+        if (countdown.GetTimeLeft() <= 0.0f && !endgame)
+        {
+            endgame = true;
+            StartCoroutine(EndGame());
+        }
     }
 
     public void OnSubmit()
@@ -61,7 +70,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
             {
                 feedbackText.GetComponent<Text>().color = Color.red;
                 feedbackText.text = wrongAnswerMessage;
-                score--;
+                GameManager.instance.WrongAnswer();
             }
             answerInputField.text = "";
     }
@@ -84,7 +93,7 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
             questionText.text = questions[index];
             answerText.text += answers[index - 1][0];
         }
-        score++;
+        GameManager.instance.CorrectAnswer();
         yield return new WaitForSeconds(2.5f);
         CamerasManager.camerasManagerInstance.SwapCamera(0);
         canvas.SetActive(true);
@@ -96,7 +105,13 @@ public class escaperoom1_3_questions_logic : MonoBehaviour
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         yield return new WaitForSeconds(2.5f);
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(2, score);
+
+        for (int i = 0; i < (questions.Length - 1) - index; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
+
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         SoundManager.instance.PlaySound(4);

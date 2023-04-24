@@ -535,7 +535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.5307922, y: -10.179794}
+  m_AnchoredPosition: {x: -2.5307617, y: -10.17981}
   m_SizeDelta: {x: 295.2664, y: 158.8536}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &216303012
@@ -585,7 +585,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: timeLeft
-      value: 5
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1706903997546584424, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
       propertyPath: m_Name
@@ -677,6 +677,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+--- !u!114 &222940730 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1706903995857409691, guid: a31553c049a5fec4995e61048bf40f73, type: 3}
+  m_PrefabInstance: {fileID: 222940729}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90d2712f3cd245458e22d95d714d7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &240026092
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,11 +1670,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -9.4632
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -5.000061
+      value: -16
       objectReference: {fileID: 0}
     - target: {fileID: 6637196253055611255, guid: a401cae67abafec45827d2f2638f2182, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2203,6 +2214,7 @@ MonoBehaviour:
   numQuestions: 5
   room: {fileID: 4400219260091526615}
   fadeToBlackPanel: {fileID: 216303010}
+  countdown: {fileID: 222940730}
   textures:
   - {fileID: 2800000, guid: 1ae89fbc32245d54ca06d04d4312aa2f, type: 3}
   - {fileID: 2800000, guid: 049aa1a959ae34c49a0121b2d0d87e27, type: 3}

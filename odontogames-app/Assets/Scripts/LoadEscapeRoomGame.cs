@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LoadEscapeRoomGame : MonoBehaviour
 {
     public string level;
+    public int minigame;
 
     public void Start()
     {
@@ -14,6 +15,7 @@ public class LoadEscapeRoomGame : MonoBehaviour
 
     public void LoadLevel()
     {
+        GameManager.instance.SetCurrentMinigame(minigame);
         MySceneManager.instance.LoadScene(level);
     }
 }

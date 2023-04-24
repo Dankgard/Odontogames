@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EscapeRoom1_1_logic : MonoBehaviour
+public class escapeRoom1_1_logic : MonoBehaviour
 {
     public GameObject panel; // El panel de la UI
     public GameObject prefab; // El prefab que se va a generar
     public GameObject door;
     public GameObject robot;
 
+    public Countdown countdown;
+
     // un array de las plataformas que se tienen que llenar
-    public EscapeRoom1_1_AnswerBox[] platforms;
+    public escapeRoom1_1_AnswerBox[] platforms;
 
     private int numberOfPictures;
 
@@ -20,7 +22,6 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     public Texture2D[] textures;
 
     private int picturesSpawned = 0;
-    private int score = 0;
     private bool gameEnded = false;
 
     private void Start()
@@ -34,7 +35,7 @@ public class EscapeRoom1_1_logic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (picturesSpawned <= 0 && !gameEnded)
+        if ((picturesSpawned <= 0 || countdown.GetTimeLeft() <= 0.0f) && !gameEnded)
         {
             gameEnded = true;
             EndGame();
@@ -53,7 +54,15 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     public void CheckAnswer(string containerName)
     {
         string imageType = currentImage.GetComponent<ShowImage>().GetTextureName();
-        if (imageType == containerName) score++; else score--;
+        if (imageType == containerName)
+        {
+            GameManager.instance.CorrectAnswer();
+        }
+        else
+        {
+            GameManager.instance.WrongAnswer();
+        }
+
         Destroy(currentImage);
         CreateImagePrefab();
     }
@@ -103,9 +112,16 @@ public class EscapeRoom1_1_logic : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         CamerasManager.camerasManagerInstance.SwapCamera(3);
-        while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded())
+        if (countdown.GetTimeLeft() > 0.0f)
+            while (!robot.GetComponent<escaperoom1_1_robot>().GameHasEnded())
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(0, score);
+
+        for (int i = 0; i < picturesSpawned; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
+
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         SoundManager.instance.PlaySound(4);

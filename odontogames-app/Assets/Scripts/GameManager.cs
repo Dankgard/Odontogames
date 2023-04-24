@@ -4,39 +4,108 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public struct Minigame_Score
+    {
+        public int correctAnswers;
+        public int wrongAnswers;
+        public int bonusPoints;
+    }
+
     public static GameManager instance;
 
-    public int[] gamePoints;
-    public int currentMinigame = 1;
+    private Dictionary<int, Minigame_Score> gamePoints;
+
+    private int currentMinigame = 1;
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            if(instance != this)
+            if (instance != this)
             {
                 Destroy(gameObject);
             }
         }
 
-        gamePoints = new int[7];
+        gamePoints = new Dictionary<int, Minigame_Score>();
     }
 
-    public void ReceiveGamePoints(int minigame, int points)
+    public void CorrectAnswer()
     {
-        gamePoints[minigame] = points;
+        if (!gamePoints.ContainsKey(currentMinigame))
+        {
+            gamePoints[currentMinigame] = new Minigame_Score();
+        }
+        Minigame_Score currentScore = gamePoints[currentMinigame];
+        currentScore.correctAnswers++;
+
+        gamePoints[currentMinigame] = currentScore;
+    }
+
+    public void WrongAnswer()
+    {
+        if (!gamePoints.ContainsKey(currentMinigame))
+        {
+            gamePoints[currentMinigame] = new Minigame_Score();
+        }
+        Minigame_Score currentScore = gamePoints[currentMinigame];
+        currentScore.wrongAnswers++;
+
+        gamePoints[currentMinigame] = currentScore;
+    }
+
+    public void ReceiveBonusPoints(int points)
+    {
+        if (!gamePoints.ContainsKey(currentMinigame))
+        {
+            gamePoints[currentMinigame] = new Minigame_Score();
+        }
+        Minigame_Score currentScore = gamePoints[currentMinigame];
+        currentScore.bonusPoints = points;
+
+        gamePoints[currentMinigame] = currentScore;
+    }
+
+    public void UpdatePlayerScore()
+    {
+        string currentMinigameName = "firstgamescore";
+        switch (currentMinigame)
+        {
+            case 1:
+                currentMinigameName = "firstgamescore";
+                break;
+            case 2:
+                currentMinigameName = "secondgamescore";
+                break;
+            case 3:
+                currentMinigameName = "thirdgamescore";
+                break;
+            case 4:
+                currentMinigameName = "fourthgamescore";
+                break;
+            case 5:
+                currentMinigameName = "fifthgamescore";
+                break;
+            case 6:
+                currentMinigameName = "sixthgamescore";
+                break;
+            case 7:
+                currentMinigameName = "seventhgamescore";
+                break;
+        }
+
         if (StrapiComponent._instance != null) 
-            StrapiComponent._instance.UpdatePlayerScore(gamePoints[minigame]);
+            StrapiComponent._instance.UpdatePlayerScore(gamePoints[currentMinigame], currentMinigameName);
     }
 
     public void NextMinigame()
     {
-        if(currentMinigame == 7)
+        if (currentMinigame == 7)
         {
             EndGame();
         }
@@ -48,9 +117,24 @@ public class GameManager : MonoBehaviour
         
     }
 
-    void EndGame()
+    private void EndGame()
     {
-        // end of the game
+        UpdatePlayerScore();
         MySceneManager.instance.LoadScene("MainMenu");
+    }
+
+    public void SetCurrentMinigame(int current)
+    {
+        currentMinigame = current;
+    }
+
+    public int GetPoints()
+    {
+        return gamePoints[currentMinigame].correctAnswers;
+    }
+
+    public Minigame_Score GetMinigameScore()
+    {
+        return gamePoints[currentMinigame];
     }
 }

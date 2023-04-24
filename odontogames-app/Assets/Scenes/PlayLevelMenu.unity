@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: level
       value: escaperoom1_4
       objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize
       value: 50
@@ -259,6 +263,10 @@ PrefabInstance:
     - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: level
       value: escaperoom1_6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize
@@ -1280,6 +1288,10 @@ PrefabInstance:
       propertyPath: level
       value: escaperoom1_7
       objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize
       value: 50
@@ -1416,6 +1428,10 @@ PrefabInstance:
     - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: level
       value: escaperoom1_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize
@@ -1793,6 +1809,10 @@ PrefabInstance:
       propertyPath: level
       value: escaperoom1_5
       objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize
       value: 50
@@ -2124,6 +2144,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 516117201}
     m_Modifications:
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_Text
       value: 
@@ -2565,6 +2589,10 @@ PrefabInstance:
     - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: level
       value: escaperoom1_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4781072263738542471, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
+      propertyPath: minigame
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7936818543456483878, guid: 9d6fa897f467d924daf1c9412f1c2260, type: 3}
       propertyPath: m_FontData.m_MaxSize

@@ -6,6 +6,7 @@ using UnityEngine;
 public class escaperoom1_4_questions : MonoBehaviour
 {
     public GameObject door;
+    public Countdown countdown;
 
     public string[] question;
     public string[] answer1;
@@ -24,7 +25,7 @@ public class escaperoom1_4_questions : MonoBehaviour
     private string[] results = new string[5];
 
     private int currentQuestion = -1;
-    private int score = 0;
+    private bool gameEnded = false;
 
     void Awake()
     {
@@ -37,6 +38,15 @@ public class escaperoom1_4_questions : MonoBehaviour
         line5 = gameObject.transform.GetChild(4).GetComponent<TextMesh>();
 
         NextQuestion();
+    }
+
+    private void FixedUpdate()
+    {
+        if (countdown.GetTimeLeft() <= 0.0f && !gameEnded)
+        {
+            gameEnded = true;
+            EndGame();
+        }
     }
 
     void NextQuestion()
@@ -66,7 +76,11 @@ public class escaperoom1_4_questions : MonoBehaviour
         CamerasManager.camerasManagerInstance.SwapCamera(1);
         yield return new WaitForSeconds(1.5f);
         SoundManager.instance.PlaySound(2);
-        GameManager.instance.ReceiveGamePoints(3, score);
+        for (int i = 0; i < 5 - currentQuestion; i++)
+            GameManager.instance.WrongAnswer();
+
+        GameManager.instance.ReceiveBonusPoints(countdown.GetBonusPoints());
+        GameManager.instance.UpdatePlayerScore();
         door.transform.GetComponent<Animator>().enabled = true;
         door.transform.GetComponent<Animator>().Play("door_anim");
         SoundManager.instance.PlaySound(4);
@@ -80,26 +94,25 @@ public class escaperoom1_4_questions : MonoBehaviour
         {
             case "a":
                 if (answer1[currentQuestion].Split('|')[1] == "c")
-                    score++;
-                else score--;
+                    GameManager.instance.CorrectAnswer();
+                else GameManager.instance.WrongAnswer(); ;
                 break;
             case "b":
                 if (answer2[currentQuestion].Split('|')[1] == "c")
-                    score++;
-                else score--;
+                    GameManager.instance.CorrectAnswer();
+                else GameManager.instance.WrongAnswer(); ;
                 break;
             case "c":
                 if (answer3[currentQuestion].Split('|')[1] == "c")
-                    score++;
-                else score--;
+                    GameManager.instance.CorrectAnswer();
+                else GameManager.instance.WrongAnswer(); ;
                 break;
             case "d":
                 if (answer4[currentQuestion].Split('|')[1] == "c")
-                    score++;
-                else score--;
+                    GameManager.instance.CorrectAnswer();
+                else GameManager.instance.WrongAnswer(); ;
                 break;
         }
-        Debug.Log("Puntos " + score);
         StartCoroutine(ChooseAnswerCoroutine(answer));
     }
 
