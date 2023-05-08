@@ -176,14 +176,14 @@ public class StrapiComponent : MonoBehaviour
 
     public void GetNotesFromServer()
     {
-        StartCoroutine(GetNotesFromServerCoroutine("api/users"));
+        StartCoroutine(GetNotesFromServerCoroutine("api/users?userrole=estudiante"));
     }
 
     private IEnumerator GetNotesFromServerCoroutine(string endpoint)
     {
         yield return GetListOfUsersFromServerCoroutine(endpoint);
         Document document = new Document();
-        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "notas.pdf");
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads", "notas.pdf");
         PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.OpenOrCreate));
         document.Open();
 
@@ -193,17 +193,13 @@ public class StrapiComponent : MonoBehaviour
             string line = "Usuario " + users[i].id + " " + users[i].firstname + " " + users[i].lastname +
                 " " + users[i].username + " " + users[i].email + ".\n";
 
-            // Crea un objeto Chunk con el texto en negrita y la fuente Arial
             Chunk chunk = new Chunk(line, font);
 
-            // Crea un objeto Paragraph y agrega el Chunk
             Paragraph paragraph = new Paragraph(chunk);
             document.Add(paragraph);
 
-            // Crea un objeto Chunk para el texto en negrita
             chunk = new Chunk("Bloque 1.\n", font);
 
-            // Crea un objeto Paragraph y agrega el Chunk
             paragraph = new Paragraph(chunk);
             document.Add(paragraph);
 
@@ -259,7 +255,7 @@ public class StrapiComponent : MonoBehaviour
         }
     }
 
-    public IEnumerator RegisterCoroutine(string username, string name, string surname, string email, string password, bool isTeacher)
+    private IEnumerator RegisterCoroutine(string username, string name, string surname, string email, string password, bool isTeacher)
     {
         OnAuthStarted?.Invoke();
         var jsonObj = new JObject(
@@ -281,7 +277,7 @@ public class StrapiComponent : MonoBehaviour
         else yield break;
     }
 
-    public IEnumerator ChangeUserRole(int roleID, string userID)
+    private IEnumerator ChangeUserRole(int roleID, string userID)
     {
         string endpoint = $"api/users/{userID}";
 
@@ -310,7 +306,7 @@ public class StrapiComponent : MonoBehaviour
         StartCoroutine(PostAuthRequest(endpoint, jsonString));
     }
 
-    public virtual void EditProfile(string username, string email, string name, string surname)
+    public void EditProfile(string username, string email, string name, string surname)
     {
         OnAuthStarted?.Invoke();
         JObject jsonObject = new JObject();
@@ -342,7 +338,8 @@ public class StrapiComponent : MonoBehaviour
 
             string jsonString = JsonConvert.SerializeObject(jsonObject);
 
-            StartCoroutine(PutRequest(endpoint, jsonString, () => StartCoroutine(GetUpdatedUserData(endpoint))));
+            StartCoroutine(PutRequest(endpoint, jsonString, () => 
+                StartCoroutine(GetUpdatedUserData(endpoint))));
         }
         else
         {
@@ -358,7 +355,7 @@ public class StrapiComponent : MonoBehaviour
     {
         StartCoroutine(CreateStrapiUserTeamCoroutine(groupName, members));
     }
-    public IEnumerator CreateStrapiUserTeamCoroutine(string groupName, List<int> members)
+    private IEnumerator CreateStrapiUserTeamCoroutine(string groupName, List<int> members)
     {
         int score = 0;
         foreach (int memberId in members)
@@ -381,7 +378,6 @@ public class StrapiComponent : MonoBehaviour
         string endpoint = "api/teams";
 
         yield return StartCoroutine(PostGroupRequest(endpoint, jsonString));
-        // Por alguna razon no se actualiza bien la relacion
         UpdateSelectedPlayersCoroutine(members);
     }
 
@@ -409,9 +405,8 @@ public class StrapiComponent : MonoBehaviour
         StartCoroutine(UpdateStrapiUserTeamCoroutine(teamID, members, addingPlayers));
     }
 
-    public IEnumerator UpdateStrapiUserTeamCoroutine(int teamID, List<int> members, bool addingPlayers) {
+    private IEnumerator UpdateStrapiUserTeamCoroutine(int teamID, List<int> members, bool addingPlayers) {
         string endpoint = $"api/teams/{teamID}?populate=members";
-        Debug.Log("AAAAAAAAAAAAAAA");
         yield return GetGroupDataRequest(endpoint);
 
         int newGroupSize = strapiUserTeam.numplayers;
@@ -425,7 +420,6 @@ public class StrapiComponent : MonoBehaviour
         List<int> copy = new List<int>(members);
         for (int i = 0; i < users.Length; i++)
         {
-            Debug.Log(users[i].id);
             int id = users[i].id;
             if (members.Contains(id))
             {
@@ -452,7 +446,6 @@ public class StrapiComponent : MonoBehaviour
         }
         else
         {
-            Debug.Log(strapiUserTeam.members.data);
             for (int j = 0; j < strapiUserTeam.members.data.Length; j++)
             {
                 int id = strapiUserTeam.members.data[j].id;
@@ -483,7 +476,8 @@ public class StrapiComponent : MonoBehaviour
 
             if (members[i] == int.Parse(userID))
             {
-                StartCoroutine(PutRequest(endpoint, jsonString, () => StartCoroutine(GetUpdatedUserData(endpoint))));
+                StartCoroutine(PutRequest(endpoint, jsonString, 
+                    () => StartCoroutine(GetUpdatedUserData(endpoint))));
             }
             else StartCoroutine(PutRequest(endpoint, jsonString));
         }
@@ -499,12 +493,6 @@ public class StrapiComponent : MonoBehaviour
     {
         string endpoint = $"api/teams/{id}?populate=members";
         yield return GetGroupDataRequest(endpoint);
-    }
-    public IEnumerator GetStrapiUserFreePlayers(int id)
-    {
-        string endpoint = $"api/users";
-        Debug.Log(endpoint);
-        yield return GetUsersRequest(endpoint);
     }
     #endregion
 
@@ -557,13 +545,13 @@ public class StrapiComponent : MonoBehaviour
     #endregion
 
     #region Delete_functions
-    public virtual void DeleteAccount()
+    public void DeleteAccount()
     {
         OnAuthStarted?.Invoke();
         string endpoint = $"api/users/{authenticatedUser.id}";
         StartCoroutine(DeleteRequest(endpoint));
     }
-    public virtual void DeleteUserAccount(int id)
+    public void DeleteUserAccount(int id)
     {
         OnAuthStarted?.Invoke();
         string endpoint = $"api/users/{id}";
